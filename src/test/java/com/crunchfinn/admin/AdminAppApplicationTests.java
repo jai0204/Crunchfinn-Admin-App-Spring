@@ -1,4 +1,4 @@
-package com.crunchfinn.admin_app;
+package com.crunchfinn.admin;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
