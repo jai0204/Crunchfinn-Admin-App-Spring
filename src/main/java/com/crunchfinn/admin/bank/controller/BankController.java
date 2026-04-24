@@ -60,4 +60,18 @@ public class BankController {
 
         return "redirect:/banks/" + bank.getBankCode();
     }
+
+    // VIEW PAGE
+    @GetMapping("/{code}")
+    public String viewBank(@PathVariable String code,
+                           HttpServletRequest request,
+                           Model model) {
+
+        BankResponse bank = bankService.getByBankCode(code);
+
+        model.addAttribute("bank", bank);
+        model.addAttribute("currentPath", request.getRequestURI());
+
+        return "banks/view";
+    }
 }
