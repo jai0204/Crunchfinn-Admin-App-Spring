@@ -74,4 +74,47 @@ public class BankController {
 
         return "banks/view";
     }
+
+    // EDIT PAGE
+    @GetMapping("/{code}/edit")
+    public String editPage(@PathVariable String code,
+                           HttpServletRequest request,
+                           Model model) {
+
+        BankResponse bank = bankService.getByBankCode(code);
+
+        model.addAttribute("form", bank);
+        model.addAttribute("currentPath", request.getRequestURI());
+
+        return "banks/edit";
+    }
+
+    // EDIT SUBMIT
+    @PostMapping("/{code}/edit")
+    public String updateBank(
+            @PathVariable String code,
+            @ModelAttribute("form") UpdateBankRequest request,
+            RedirectAttributes redirectAttributes) {
+
+        bankService.updateBank(code, request);
+
+        redirectAttributes.addFlashAttribute("success",
+                "Bank updated successfully");
+
+        return "redirect:/banks/" + code;
+    }
+
+    // DELETE
+    @PostMapping("/{code}/delete")
+    public String deleteBank(
+            @PathVariable String code,
+            RedirectAttributes redirectAttributes) {
+
+        bankService.deleteBank(code);
+
+        redirectAttributes.addFlashAttribute("success",
+                "Bank deleted successfully");
+
+        return "redirect:/banks";
+    }
 }
