@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      th:replace="layout/base :: layout">
+<div th:fragment="content">
+  <div class="w-full max-w-7xl mx-auto bg-white">
+    <div class="px-6 pt-4 flex justify-end">
+      <a th:href="@{/banks/new}"
+         class="group inline-flex items-center gap-x-1.5 px-3 py-2 text-sm text-blue-600 font-semibold rounded-md bg-white shadow-xs border-blue-600 border hover:bg-blue-600 hover:text-white">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-5 text-blue-600 group-hover:text-white">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+        </svg>
+        Add</a>
+    </div>
+    <div class="py-4 px-6">
+      <div th:if="${banks != null and #lists.isEmpty(banks)}"
+           class="p-4 sm:p-6 lg:p-10 border-2 border-dashed border-gray-200 rounded-lg">
+        <h2 class="text-base font-semibold text-gray-900">No banks found</h2>
+        <p class="mt-1 text-sm/6 text-gray-500">Add some banks to get started.</p>
+      </div>
+      <div th:if="${banks != null and !#lists.isEmpty(banks)}"
+           class="w-full border border-gray-200 rounded-lg overflow-x-auto">
+        <table class="relative min-w-full divide-y-1 divide-gray-300">
+          <thead>
+          <tr>
+            <th scope="col" class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-blue-600">#</th>
+            <th scope="col" class="py-3.5 px-3 text-left text-sm font-semibold text-blue-600">Bank_Code</th>
+            <th scope="col" class="py-3.5 px-3 text-left text-sm font-semibold text-blue-600">Name</th>
+            <th scope="col" class="py-3.5 px-3 text-left text-sm font-semibold text-blue-600">Partnership Date</th>
+            <th scope="col" class="py-3.5 px-3 text-left text-sm font-semibold text-blue-600">Partner Code</th>
+            <th scope="col" class="py-3.5 px-3 text-left text-sm font-semibold text-blue-600">Contract Date</th>
+            <th scope="col" class="py-3.5 px-3 text-left text-sm font-semibold text-blue-600">Roi Min</th>
+            <th scope="col" class="py-3.5 px-3 text-left text-sm font-semibold text-blue-600">Roi Max</th>
+            <th scope="col" class="py-3.5 px-3 text-left text-sm font-semibold text-blue-600">Register Time</th>
+            <th scope="col" class="pl-3 py-3.5 pr-4">
+              <span class="sr-only">View</span>
+            </th>
+          </tr>
+          </thead>
+          <tbody class="divide-y-1 divide-gray-200">
+          <tr th:each="bank : ${banks}">
+            <td class="pl-4 pr-3 py-4 text-sm text-gray-600 whitespace-nowrap" th:text="${bankStat.count}"></td>
+            <td class="py-4 px-3 text-sm text-gray-600 whitespace-nowrap" th:text="${bank.bankCode}"></td>
+            <td class="py-4 px-3 text-sm text-gray-600 whitespace-nowrap" th:text="${bank.name}"></td>
+            <td class="py-4 px-3 text-sm text-gray-600 whitespace-nowrap" th:text="${#temporals.format(bank.partnershipDate, 'dd MMM yyyy')}"></td>
+            <td class="py-4 px-3 text-sm text-gray-600 whitespace-nowrap" th:text="${bank.partnerCode}"></td>
+            <td class="py-4 px-3 text-sm text-gray-600 whitespace-nowrap" th:text="${#temporals.format(bank.contractStartDate, 'dd MMM yyyy')}"></td>
+            <td class="py-4 px-3 text-sm text-gray-600 whitespace-nowrap" th:text="${bank.roiMin}"></td>
+            <td class="py-4 px-3 text-sm text-gray-600 whitespace-nowrap" th:text="${bank.roiMax}"></td>
+            <td class="py-4 px-3 text-sm text-gray-600 whitespace-nowrap" th:text="${#temporals.format(bank.createdAt, 'dd MMM yyyy HH:mm:ss')}"></td>
+            <td class="pl-3 pr-4 py-4 text-right text-sm font-medium whitespace-nowrap">
+              <a th:href="@{/banks/{code}(code=${bank.bankCode})}" class="text-blue-600 hover:text-blue-800">View</a>
+            </td>
+          </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+</html>
