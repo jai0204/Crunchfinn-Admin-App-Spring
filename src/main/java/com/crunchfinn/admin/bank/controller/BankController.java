@@ -37,4 +37,27 @@ public class BankController {
         return "banks/list";
     }
 
+    // CREATE PAGE
+    @GetMapping("/new")
+    public String createPage(HttpServletRequest request,
+                             Model model) {
+
+        model.addAttribute("form", new CreateBankRequest());
+        model.addAttribute("currentPath", request.getRequestURI());
+
+        return "banks/create";
+    }
+
+    // CREATE SUBMIT
+    @PostMapping
+    public String createBank(@ModelAttribute("form") CreateBankRequest request,
+                             RedirectAttributes redirectAttributes) {
+
+        BankResponse bank = bankService.createBank(request);
+
+        redirectAttributes.addFlashAttribute("success",
+                "Bank created successfully");
+
+        return "redirect:/banks/" + bank.getBankCode();
+    }
 }
