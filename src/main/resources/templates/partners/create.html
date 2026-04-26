@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      th:replace="layout/base :: layout">
+<div th:fragment="content">
+  <div class="w-full max-w-7xl mx-auto bg-white">
+    <div class="py-4 lg:py-8 px-6 lg:px-12">
+      <form th:action="@{/partners}" th:object="${form}" method="post">
+        <div class="space-y-6">
+          <!-- Bank partner info -->
+          <div class="border-b border-gray-900/10 pb-6">
+            <h2 class="text-base/7 font-semibold text-gray-900">1. Bank Partner Information</h2>
+            <div class="mt-6 grid grid-cols-1 gap-x-8 gap-y-6 sm:grid-cols-6">
+              <div class="sm:col-span-3">
+                <label for="bank" class="block text-sm/6 font-medium text-gray-900">Bank *</label>
+                <div class="mt-2 grid grid-cols-1">
+                  <select id="bank" name="bankId" required
+                          class="col-start-1 row-start-1 w-full appearance-none rounded-md bg-white py-1.5 pr-8 pl-3 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 sm:text-sm/6">
+                    <option value="" disabled selected>Choose..</option>
+                    <option th:each="bank : ${banks}"
+                            th:value="${bank.id}"
+                            th:text="${bank.name}"></option>
+                  </select>
+                  <svg viewBox="0 0 16 16" fill="currentColor" data-slot="icon" aria-hidden="true" class="pointer-events-none col-start-1 row-start-1 mr-2 size-5 self-center justify-self-end text-gray-500 sm:size-4">
+                    <path d="M4.22 6.22a.75.75 0 0 1 1.06 0L8 8.94l2.72-2.72a.75.75 0 1 1 1.06 1.06l-3.25 3.25a.75.75 0 0 1-1.06 0L4.22 7.28a.75.75 0 0 1 0-1.06Z" clip-rule="evenodd" fill-rule="evenodd"></path>
+                  </svg>
+                </div>
+              </div>
+            </div>
+          </div>
+          <!-- Location info -->
+          <div class="border-b border-gray-900/10 pb-6">
+            <h2 class="text-base/7 font-semibold text-gray-900">2. Location Information</h2>
+            <div class="mt-6 grid grid-cols-1 gap-x-8 gap-y-6 sm:grid-cols-6">
+              <div class="sm:col-span-3">
+                <label for="address-line-1" class="block text-sm/6 font-medium text-gray-900">Address Line 1</label>
+                <div class="mt-2">
+                  <input id="address-line-1" type="text" name="addressLine1"
+                         class="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 sm:text-sm/6">
+                </div>
+              </div>
+              <div class="sm:col-span-3">
+                <label for="address-line-2" class="block text-sm/6 font-medium text-gray-900">Address Line 2</label>
+                <div class="mt-2">
+                  <input id="address-line-2" type="text" name="addressLine2"
+                         class="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 sm:text-sm/6">
+                </div>
+              </div>
+              <div class="sm:col-span-3">
+                <div class="grid grid-cols-2 gap-x-6">
+                  <div class="col-span-1">
+                    <label for="state" class="block text-sm/6 font-medium text-gray-900">State *</label>
+                    <div class="mt-2 grid grid-cols-1">
+                      <select id="state" name="state" required onchange="cityOptions('city', this.selectedIndex, false)"
+                              class="col-start-1 row-start-1 w-full appearance-none rounded-md bg-white py-1.5 pr-8 pl-3 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 sm:text-sm/6">
+                      </select>
+                      <svg viewBox="0 0 16 16" fill="currentColor" data-slot="icon" aria-hidden="true" class="pointer-events-none col-start-1 row-start-1 mr-2 size-5 self-center justify-self-end text-gray-500 sm:size-4">
+                        <path d="M4.22 6.22a.75.75 0 0 1 1.06 0L8 8.94l2.72-2.72a.75.75 0 1 1 1.06 1.06l-3.25 3.25a.75.75 0 0 1-1.06 0L4.22 7.28a.75.75 0 0 1 0-1.06Z" clip-rule="evenodd" fill-rule="evenodd"></path>
+                      </svg>
+                    </div>
+                  </div>
+                  <div class="col-span-1">
+                    <label for="city" class="block text-sm/6 font-medium text-gray-900">City *</label>
+                    <div class="mt-2 grid grid-cols-1">
+                      <select id="city" name="city" required
+                              class="col-start-1 row-start-1 w-full appearance-none rounded-md bg-white py-1.5 pr-8 pl-3 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 sm:text-sm/6">
+                        <option value="" selected>Choose a state..</option>
+                      </select>
+                      <svg viewBox="0 0 16 16" fill="currentColor" data-slot="icon" aria-hidden="true" class="pointer-events-none col-start-1 row-start-1 mr-2 size-5 self-center justify-self-end text-gray-500 sm:size-4">
+                        <path d="M4.22 6.22a.75.75 0 0 1 1.06 0L8 8.94l2.72-2.72a.75.75 0 1 1 1.06 1.06l-3.25 3.25a.75.75 0 0 1-1.06 0L4.22 7.28a.75.75 0 0 1 0-1.06Z" clip-rule="evenodd" fill-rule="evenodd"></path>
+                      </svg>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="sm:col-span-3">
+                <label for="pincode" class="block text-sm/6 font-medium text-gray-900">Pincode</label>
+                <div class="mt-2">
+                  <input id="pincode" type="text" name="pincode" pattern="[1-9]{1}[0-9]{5}" maxlength="6"
+                         class="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 sm:text-sm/6">
+                </div>
+              </div>
+              <div class="sm:col-span-3">
+                <label for="state-code" class="block text-sm/6 font-medium text-gray-900">State Code</label>
+                <div class="mt-2">
+                  <input id="state-code" type="text" name="stateCode" maxlength="3"
+                         class="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 sm:text-sm/6">
+                </div>
+              </div>
+              <div class="sm:col-span-3">
+                <label for="gstin" class="block text-sm/6 font-medium text-gray-900">GSTIN</label>
+                <div class="mt-2">
+                  <input id="gstin" type="text" name="gstin" maxlength="20"
+                         class="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 sm:text-sm/6">
+                </div>
+              </div>
+            </div>
+          </div>
+          <!-- Handler info -->
+          <div class="border-b border-gray-900/10 pb-6">
+            <h2 class="text-base/7 font-semibold text-gray-900">3. Handler Information</h2>
+            <div class="mt-6 grid grid-cols-1 gap-x-8 gap-y-6 sm:grid-cols-6">
+              <div class="sm:col-span-3">
+                <label for="name" class="block text-sm/6 font-medium text-gray-900">Name</label>
+                <div class="mt-2">
+                  <input id="name" type="text" name="handlerName" maxlength="20"
+                         class="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 sm:text-sm/6">
+                </div>
+              </div>
+              <div class="sm:col-span-3">
+                <label for="gender" class="block text-sm/6 font-medium text-gray-900">Gender</label>
+                <div class="mt-2 grid grid-cols-1">
+                  <select id="gender" name="handlerGender"
+                          class="col-start-1 row-start-1 w-full appearance-none rounded-md bg-white py-1.5 pr-8 pl-3 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 sm:text-sm/6">
+                    <option value="" selected>Choose..</option>
+                    <option th:each="gender : ${genderList}"
+                            th:value="${gender}"
+                            th:text="${gender}"></option>
+                  </select>
+                  <svg viewBox="0 0 16 16" fill="currentColor" data-slot="icon" aria-hidden="true" class="pointer-events-none col-start-1 row-start-1 mr-2 size-5 self-center justify-self-end text-gray-500 sm:size-4">
+                    <path d="M4.22 6.22a.75.75 0 0 1 1.06 0L8 8.94l2.72-2.72a.75.75 0 1 1 1.06 1.06l-3.25 3.25a.75.75 0 0 1-1.06 0L4.22 7.28a.75.75 0 0 1 0-1.06Z" clip-rule="evenodd" fill-rule="evenodd"></path>
+                  </svg>
+                </div>
+              </div>
+              <div class="sm:col-span-3">
+                <label for="phone-number" class="block text-sm/6 font-medium text-gray-900">Phone Number</label>
+                <div class="mt-2">
+                  <input id="phone-number" type="text" name="handlerPhoneNumber" pattern="[0]?[0-9]{10}" maxlength="11"
+                         class="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 sm:text-sm/6">
+                </div>
+              </div>
+              <div class="sm:col-span-3">
+                <label for="email-to" class="block text-sm/6 font-medium text-gray-900">Email To</label>
+                <div class="mt-2">
+                  <input id="email-to" type="email" name="emailTo" multiple
+                         class="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 sm:text-sm/6">
+                </div>
+              </div>
+              <div class="sm:col-span-3">
+                <label for="email-cc" class="block text-sm/6 font-medium text-gray-900">Email Cc</label>
+                <div class="mt-2">
+                  <input id="email-cc" type="email" name="emailCc" multiple
+                         class="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 sm:text-sm/6">
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="mt-6 flex items-center gap-x-6">
+            <button type="submit" class="rounded-md bg-blue-600 px-3 py-2 text-sm font-semibold text-white shadow-xs hover:bg-blue-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600">Submit</button>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+  <script type="text/javascript" th:src="@{/js/formHelper.js}"></script>
+  <script type="text/javascript" th:src="@{/js/stateCity.js}"></script>
+  <script type="text/javascript">
+    loadLists(function () {
+      stateOptions(['state'], false);
+      allCityOptions('cityListOptions');
+    });
+  </script>
+</div>
+</html>
