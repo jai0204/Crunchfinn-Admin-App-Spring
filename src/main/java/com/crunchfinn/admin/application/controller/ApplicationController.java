@@ -69,4 +69,28 @@ public class ApplicationController {
 
         return "redirect:/applications/" + response.getApplicationId();
     }
+
+    @GetMapping("/{applicationId}")
+    public String viewApplication(@PathVariable String applicationId,
+                                  HttpServletRequest request,
+                                  Model model) {
+        ApplicationResponse response = applicationService.getApplication(applicationId);
+
+        AdminUpdateRequest adminForm = new AdminUpdateRequest();
+
+        adminForm.setApplicationId(response.getApplicationId());
+        adminForm.setStatus(response.getStatus());
+        adminForm.setSource(response.getSource());
+        adminForm.setAdminNotes(response.getAdminNotes());
+
+        model.addAttribute("app", response);
+        model.addAttribute("adminForm", adminForm);
+        model.addAttribute("statusList", ApplicationStatus.values());
+        model.addAttribute("sourceList", ApplicationSource.values());
+        model.addAttribute("partnerStatusList", ApplicationPartnerStatus.values());
+        model.addAttribute("disabledStatuses", applicationService.getDisabledStatuses());
+        model.addAttribute("currentPath", request.getRequestURI());
+
+        return "applications/view";
+    }
 }

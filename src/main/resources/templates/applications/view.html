@@ -1,0 +1,497 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{layout/base :: layout}">
+<div th:fragment="content">
+  <div class="w-full max-w-7xl mx-auto bg-white">
+    <div th:if="${app != null}"
+         class="w-full pb-6">
+      <div class="py-4 px-4 border-b border-gray-200">
+        <div class="mb-1 text-sm"><span class="font-semibold text-blue-600">App_ID: </span><span class="text-gray-600" th:text="${app.applicationId}"></span> </div>
+        <div class="flex justify-between">
+          <div>
+            <span class="text-sm font-semibold text-gray-900">Register Time: </span><span class="text-sm text-gray-600" th:text="${#temporals.format(app.createdAt, 'dd MMM yyyy HH:mm:ss')}"></span>
+             | <span class="text-sm font-semibold text-gray-900">Update Time: </span><span class="text-sm text-gray-600" th:text="${#temporals.format(app.updatedAt, 'dd MMM yyyy HH:mm:ss')}"></span>
+          </div>
+          <div class="flex gap-x-2">
+            <a th:href="@{/applications/{id}/edit(id=${app.applicationId})}">
+              <div class="size-8 flex items-center justify-center bg-blue-600 rounded-md hover:bg-blue-500">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-4 text-white">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L10.582 16.07a4.5 4.5 0 0 1-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 0 1 1.13-1.897l8.932-8.931Zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0 1 15.75 21H5.25A2.25 2.25 0 0 1 3 18.75V8.25A2.25 2.25 0 0 1 5.25 6H10" />
+                </svg>
+              </div>
+            </a>
+            <div class="size-8 flex items-center justify-center bg-blue-600 rounded-md hover:bg-blue-500">
+              <button type="button" onclick="openDeleteModal()">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-4 text-white">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="m14.74 9-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 0 1-2.244 2.077H8.084a2.25 2.25 0 0 1-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 0 0-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 0 1 3.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 0 0-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 0 0-7.5 0" />
+                </svg>
+              </button>
+            </div>
+          </div>
+        </div>
+        <div id="deleteModal" class="fixed inset-0 z-50 hidden items-center justify-center bg-black/50">
+          <div class="bg-white rounded-lg shadow-lg w-full max-w-md p-6">
+            <h2 class="text-md font-semibold text-gray-900">
+              Confirm Deletion
+            </h2>
+            <p class="mt-2 text-sm text-gray-600">
+              Are you sure you want to delete this application? This action cannot be undone.
+            </p>
+            <!-- Buttons -->
+            <div class="mt-6 flex justify-end gap-3">
+              <button type="button"
+                      onclick="closeDeleteModal()"
+                      class="px-3 py-1.5 text-sm rounded-md border border-gray-300 text-gray-700 hover:bg-gray-100">
+                Cancel
+              </button>
+              <!-- FORM SUBMIT -->
+              <form th:action="@{/applications/{id}/delete(id=${app.applicationId})}" method="post">
+                <button type="submit" class="px-3 py-1.5 text-sm rounded-md bg-red-600 text-white hover:bg-red-700">
+                  Delete
+                </button>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="py-4 px-4 border-b border-gray-200">
+        <h2 class="mb-2 text-base font-semibold text-blue-600">Admin Actions</h2>
+        <form class="flex flex-wrap gap-y-4 gap-x-6" th:action="@{/applications/admin-update}" th:object="${adminForm}" method="post">
+          <!-- Hidden ID -->
+          <input type="hidden" th:field="*{applicationId}" />
+          <div>
+            <label for="status" class="block text-sm font-medium text-gray-900">Status</label>
+            <div class="mt-2 grid grid-cols-1">
+              <select id="status" name="status"
+                      class="row-start-1 col-start-1 pl-3 pr-8 py-1.5 text-sm text-gray-900 rounded-sm appearance-none outline outline-gray-300 outline-offset-1">
+                <option value="" disabled th:selected="${adminForm.status == null}">Choose Status...</option>
+                <option th:each="statusValue : ${statusList}"
+                        th:value="${statusValue}"
+                        th:text="${statusValue}"
+                        th:selected="${statusValue == adminForm.status}"
+                        th:disabled="${#lists.contains(disabledStatuses, statusValue)}">
+                </option>
+              </select>
+              <svg viewBox="0 0 16 16" fill="currentColor" data-slot="icon" aria-hidden="true" class="mr-2 row-start-1 col-start-1 size-5 sm:size-4 text-gray-500 justify-self-end self-center pointer-events-none">
+                <path d="M4.22 6.22a.75.75 0 0 1 1.06 0L8 8.94l2.72-2.72a.75.75 0 1 1 1.06 1.06l-3.25 3.25a.75.75 0 0 1-1.06 0L4.22 7.28a.75.75 0 0 1 0-1.06Z" clip-rule="evenodd" fill-rule="evenodd"></path>
+              </svg>
+            </div>
+          </div>
+          <div>
+            <label for="source" class="block text-sm font-medium text-gray-900">Source</label>
+            <div class="mt-2 grid grid-cols-1">
+              <select id="source" name="source"
+                      class="row-start-1 col-start-1 pl-3 pr-8 py-1.5 text-sm text-gray-900 rounded-sm appearance-none outline outline-gray-300 outline-offset-1">
+                <option value="" disabled th:selected="${adminForm.status == null}">Choose Source...</option>
+                <option th:each="sourceValue : ${sourceList}"
+                        th:value="${sourceValue}"
+                        th:text="${sourceValue}"
+                        th:selected="${sourceValue == adminForm.source}">
+                </option>
+              </select>
+              <svg viewBox="0 0 16 16" fill="currentColor" data-slot="icon" aria-hidden="true" class="mr-2 row-start-1 col-start-1 size-5 sm:size-4 text-gray-500 justify-self-end self-center pointer-events-none">
+                <path d="M4.22 6.22a.75.75 0 0 1 1.06 0L8 8.94l2.72-2.72a.75.75 0 1 1 1.06 1.06l-3.25 3.25a.75.75 0 0 1-1.06 0L4.22 7.28a.75.75 0 0 1 0-1.06Z" clip-rule="evenodd" fill-rule="evenodd"></path>
+              </svg>
+            </div>
+          </div>
+          <div>
+            <label for="notes" class="block text-sm font-medium text-gray-900">Notes</label>
+            <div class="mt-2">
+              <textarea id="notes" name="adminNotes" th:text="${adminForm.adminNotes}" th:value="${adminForm.adminNotes}" rows="4" cols="35"
+                        class="w-full block py-1.5 px-3 text-base sm:text-sm text-gray-900 rounded-sm bg-white outline outline-gray-300 outline-offset-1"></textarea>
+            </div>
+          </div>
+          <div>
+            <button type="submit" class="py-1.5 px-2.5 text-sm font-semibold text-white rounded-md shadow-xs bg-blue-600 hover:bg-blue-500">
+              Update
+            </button>
+          </div>
+        </form>
+      </div>
+      <div class="border-b border-gray-200">
+        <div class="grid grid-cols-1 md:grid-cols-10">
+          <div class="col-span-1 md:col-span-6 border-r border-gray-200">
+            <div class="grid grid-cols-1 sm:grid-cols-2">
+              <div class="col-span-1">
+                <div class="px-3 py-4">
+                  <h3 class="text-base font-semibold text-blue-600">Personal Details</h3>
+                  <div class="mt-2 flex flex-col gap-y-1 text-sm">
+                    <div>
+                      <span class="text-gray-500">Name: </span>
+                      <span class="font-medium text-gray-900" th:text="${app.name}"></span>
+                    </div>
+                    <div>
+                      <span class="text-gray-500">Age: </span>
+                      <span class="font-medium text-gray-900" th:text="${app.age}"></span>
+                    </div>
+                    <div>
+                      <span class="text-gray-500">Gender: </span>
+                      <span class="font-medium text-gray-900" th:text="${app.gender}"></span>
+                    </div>
+                    <div>
+                      <span class="text-gray-500">Location: </span>
+                      <span class="font-medium text-gray-900" th:text="${app.city}"></span>,
+                      <span class="font-medium text-gray-900" th:text="${app.stateName}"></span>
+                    </div>
+                    <div>
+                      <span class="text-gray-500">Phone: </span>
+                      <span class="font-medium text-gray-900" th:text="${app.phoneNumber}"></span>
+                    </div>
+                    <div>
+                      <span class="text-gray-500">Email: </span>
+                      <span class="font-medium text-gray-900" th:text="${app.email}"></span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="col-span-1">
+                <div class="px-3 py-4">
+                  <h3 class="text-base font-semibold text-blue-600">Target Details</h3>
+                  <div class="mt-2 flex flex-col gap-y-1 text-sm">
+                    <div>
+                      <span class="text-gray-500">Country: </span>
+                      <span class="font-medium text-gray-900" th:text="${app.targetCountryName}"></span>
+                    </div>
+                    <div>
+                      <span class="text-gray-500">University: </span>
+                      <span class="font-medium text-gray-900" th:text="${app.targetUniversity}"></span>
+                    </div>
+                    <div>
+                      <span class="text-gray-500">Course Level: </span>
+                      <span class="font-medium text-gray-900" th:text="${app.courseLevel}"></span>
+                    </div>
+                    <div>
+                      <span class="text-gray-500">Course Name: </span>
+                      <span class="font-medium text-gray-900" th:text="${app.courseName}"></span>
+                    </div>
+                    <div>
+                      <span class="text-gray-500">Loan Amount: </span>
+                      <span class="font-medium text-gray-900" th:text="${#numbers.formatInteger(app.loanAmount, 1, 'COMMA')}"></span>
+                    </div>
+                    <div>
+                      <span class="text-gray-500">Intake: </span>
+                      <span class="font-medium text-gray-900" th:text="${app.intake}"></span>
+                    </div>
+                    <div>
+                      <span class="text-gray-500">Score: </span>
+                      <span class="text-gray-700">GRE: </span><span class="font-medium text-gray-900" th:text="${app.greScore}"></span>,
+                      <span class="text-gray-700">IELTS: </span><span class="font-medium text-gray-900" th:text="${app.ieltsScore}"></span>,
+                      <span class="text-gray-700">PTE: </span><span class="font-medium text-gray-900" th:text="${app.pteScore}"></span>,
+                      <span class="text-gray-700">TOEFL: </span><span class="font-medium text-gray-900" th:text="${app.toeflScore}"></span>
+                    </div>
+                    <div>
+                      <span class="text-gray-500">Admit ?: </span>
+                      <span class="font-medium text-gray-900" th:text="${app.hasAdmit}"></span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="col-span-1">
+                <div class="px-3 py-4">
+                  <h3 class="text-base font-semibold text-blue-600">Experience Details</h3>
+                  <div class="mt-2 flex flex-col gap-y-1 text-sm">
+                    <div>
+                      <span class="text-gray-500">Years: </span>
+                      <span class="font-medium text-gray-900" th:text="${app.experienceYears}"></span>
+                    </div>
+                    <div>
+                      <span class="text-gray-500">Income: </span>
+                      <span class="font-medium text-gray-900" th:text="${#numbers.formatInteger(app.income, 1, 'COMMA')}"></span>
+                    </div>
+                    <div>
+                      <span class="text-gray-500">EMI: </span>
+                      <span class="font-medium text-gray-900" th:text="${#numbers.formatInteger(app.emi, 1, 'COMMA')}"></span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="col-span-1">
+                <div class="px-3 py-4">
+                  <h3 class="text-base font-semibold text-blue-600">CoApplicant Details</h3>
+                  <div class="mt-2 flex flex-col gap-y-1 text-sm">
+                    <div>
+                      <span class="text-gray-500">Income: </span>
+                      <span class="font-medium text-gray-900" th:text="${#numbers.formatInteger(app.coapplicantIncome, 1, 'COMMA')}"></span>
+                    </div>
+                    <div>
+                      <span class="text-gray-500">Employment Type: </span>
+                      <span class="font-medium text-gray-900" th:text="${app.coapplicantNoe}"></span>
+                    </div>
+                    <div>
+                      <span class="text-gray-500">Location: </span>
+                      <span class="font-medium text-gray-900" th:text="${app.coapplicantCity}"></span>,
+                      <span class="font-medium text-gray-900" th:text="${app.coapplicantStateName}"></span>
+                    </div>
+                    <div>
+                      <span class="text-gray-500">EMI: </span>
+                      <span class="font-medium text-gray-900" th:text="${#numbers.formatInteger(app.coapplicantEmi, 1, 'COMMA')}"></span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="col-span-1">
+                <div class="px-3 py-4">
+                  <h3 class="text-base font-semibold text-blue-600">Collateral Details</h3>
+                  <div class="mt-2 flex flex-col gap-y-1 text-sm">
+                    <div>
+                      <span class="text-gray-500">Category: </span>
+                      <span class="font-medium text-gray-900" th:text="${app.collateralCategory}"></span>
+                    </div>
+                    <div>
+                      <span class="text-gray-500">Value: </span>
+                      <span class="font-medium text-gray-900" th:text="${#numbers.formatInteger(app.collateralValue, 1, 'COMMA')}"></span>
+                    </div>
+                    <div>
+                      <span class="text-gray-500">City: </span>
+                      <span class="font-medium text-gray-900" th:text="${app.collateralCity}"></span>
+                    </div>
+                    <div>
+                      <span class="text-gray-500">Pincode: </span>
+                      <span class="font-medium text-gray-900" th:text="${app.collateralPincode}"></span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="col-span-1">
+                <div class="px-3 py-4">
+                  <h3 class="text-base font-semibold text-blue-600">Academic Details</h3>
+                  <div class="mt-2 flex flex-col gap-y-1 text-sm">
+                    <div>
+                      <span class="text-gray-500">University: </span>
+                      <span class="font-medium text-gray-900" th:text="${app.academicUniversity}"></span>
+                    </div>
+                    <div>
+                      <span class="text-gray-500">Course: </span>
+                      <span class="font-medium text-gray-900" th:text="${app.academicCourse}"></span>
+                    </div>
+                    <div>
+                      <span class="text-gray-500">CGPA: </span>
+                      <span class="font-medium text-gray-900" th:text="${app.cgpa}"></span>
+                    </div>
+                    <div>
+                      <span class="text-gray-500">Backlogs: </span>
+                      <span class="font-medium text-gray-900" th:text="${app.backlogs}"></span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="col-span-1 md:col-span-4">
+            <div class="p-4">
+              <h3 class="text-base font-semibold text-blue-600">Assigned Bank Partners</h3>
+              <p th:if="${app.assignedPartners == null or (app.assignedPartners != null and #lists.isEmpty(app.assignedPartners)) }" class="mt-2 text-sm font-medium text-gray-700">No partners assigned yet.</p>
+              <div th:if="${app.assignedPartners != null and !#lists.isEmpty(app.assignedPartners)}" class="mt-2">
+                <form class="flex flex-col gap-y-4" th:action="@{/applications/{id}/update-partners(id=${app.applicationId})}" method="post">
+                  <input type="hidden" name="applicationId" th:value="${app.getId}">
+                  <div th:each="partner, iterStat : ${app.assignedPartners}" class="p-3 rounded-md border border-gray-300">
+                    <div class="grid grid-cols-12 gap-4">
+                      <!-- Hidden ID -->
+                      <input type="hidden" th:name="'partners[' + ${iterStat.index} + '].id'" th:value="${partner.id}" />
+                      <div class="col-span-6">
+                        <span class="text-sm font-medium text-blue-600">Bank: </span>
+                        <span class="text-sm font-medium text-gray-900" th:text="${partner.bankName}"></span>
+                      </div>
+                      <div class="col-span-6">
+                        <span class="text-sm font-medium text-blue-600">Name: </span>
+                        <span class="text-sm font-medium text-gray-900" th:text="${partner.handlerName}"></span>
+                      </div>
+                      <div class="col-span-6">
+                        <span class="text-sm font-medium text-blue-600">City: </span>
+                        <span class="text-sm font-medium text-gray-900" th:text="${partner.city}"></span>
+                      </div>
+                      <div class="col-span-6">
+                        <span class="text-sm font-medium text-blue-600">Phone: </span>
+                        <span class="text-sm font-medium text-gray-900" th:text="${partner.handlerPhoneNumber}"></span>
+                      </div>
+                      <div class="col-span-4">
+                        <label for="ap-status" class="block text-sm font-medium text-gray-900">Status</label>
+                        <div class="mt-1 grid grid-cols-1">
+                          <select id="ap-status" th:name="'partners[' + ${iterStat.index} + '].status'"
+                                  class="row-start-1 col-start-1 pl-2.5 pr-7.5 py-1.5 text-sm text-gray-900 rounded-sm appearance-none outline outline-gray-300 outline-offset-1">
+                            <option th:each="statusValue : ${partnerStatusList}"
+                                    th:value="${statusValue}"
+                                    th:text="${statusValue}"
+                                    th:selected="${statusValue == partner.status}">
+                            </option>
+                          </select>
+                          <svg viewBox="0 0 16 16" fill="currentColor" data-slot="icon" aria-hidden="true" class="mr-2 row-start-1 col-start-1 size-5 sm:size-4 text-gray-500 justify-self-end self-center pointer-events-none">
+                            <path d="M4.22 6.22a.75.75 0 0 1 1.06 0L8 8.94l2.72-2.72a.75.75 0 1 1 1.06 1.06l-3.25 3.25a.75.75 0 0 1-1.06 0L4.22 7.28a.75.75 0 0 1 0-1.06Z" clip-rule="evenodd" fill-rule="evenodd"></path>
+                          </svg>
+                        </div>
+                      </div>
+                      <div class="col-span-8">
+                        <label for="ap-notes" class="block text-sm font-medium text-gray-900">Notes</label>
+                        <div class="mt-1">
+                          <textarea id="ap-notes" th:name="'partners[' + ${iterStat.index} + '].notes'" th:text="${partner.notes}" th:value="${partner.notes}" rows="3" cols="25"
+                                    class="w-full block py-1.5 px-3 text-base sm:text-sm text-gray-900 rounded-sm bg-white outline outline-gray-300 outline-offset-1"></textarea>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="w-full flex justify-end">
+                    <button type="submit" class="py-1.5 px-2.5 text-sm font-semibold text-white rounded-md shadow-xs bg-blue-600 hover:bg-blue-500">
+                      Update
+                    </button>
+                  </div>
+                </form>
+              </div>
+              <div class="mt-4">
+                <button type="button" onclick="openPartnerModal()" class="py-1.5 px-2.5 text-sm font-semibold text-white rounded-md shadow-xs bg-blue-600 hover:bg-blue-500">
+                  Assign
+                </button>
+              </div>
+            </div>
+          </div>
+          <div id="partnerModal" class="fixed inset-0 z-50 hidden items-center justify-center bg-black/50">
+            <div class="bg-white rounded-lg shadow-lg w-full max-w-lg">
+              <div class="p-4 border-b border-gray-200">
+                <h2 class="text-md font-semibold text-gray-900">
+                  Assign Partner
+                </h2>
+              </div>
+              <div class="p-4">
+                <form th:action="@{/applications/{id}/assign-partner(id=${app.applicationId})}" method="post">
+                  <div class="grid grid-cols-12 gap-6">
+                    <div class="col-span-6">
+                      <label for="bank" class="block text-sm/6 font-medium text-gray-900">Bank *</label>
+                      <div class="mt-1 grid grid-cols-1">
+                        <select id="bank" name="bankId" required onchange="onBankChange()"
+                                class="col-start-1 row-start-1 w-full appearance-none rounded-md bg-white py-1.5 pr-8 pl-3 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 sm:text-sm/6">
+                          <option value="" disabled selected>Choose..</option>
+                          <option th:each="bank : ${banks}"
+                                  th:value="${bank.bankId}"
+                                  th:text="${bank.bankName}"></option>
+                        </select>
+                        <svg viewBox="0 0 16 16" fill="currentColor" data-slot="icon" aria-hidden="true" class="pointer-events-none col-start-1 row-start-1 mr-2 size-5 self-center justify-self-end text-gray-500 sm:size-4">
+                          <path d="M4.22 6.22a.75.75 0 0 1 1.06 0L8 8.94l2.72-2.72a.75.75 0 1 1 1.06 1.06l-3.25 3.25a.75.75 0 0 1-1.06 0L4.22 7.28a.75.75 0 0 1 0-1.06Z" clip-rule="evenodd" fill-rule="evenodd"></path>
+                        </svg>
+                      </div>
+                    </div>
+                    <div class="col-span-6">
+                      <label for="bank-partner" class="block text-sm/6 font-medium text-gray-900">Bank Partner *</label>
+                      <div class="mt-1 grid grid-cols-1">
+                        <select id="bank-partner" name="bankPartnerId" required disabled
+                                class="col-start-1 row-start-1 w-full appearance-none rounded-md bg-white py-1.5 pr-8 pl-3 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 sm:text-sm/6">
+                          <option value="" disabled selected>Choose..</option>
+                        </select>
+                        <svg viewBox="0 0 16 16" fill="currentColor" data-slot="icon" aria-hidden="true" class="pointer-events-none col-start-1 row-start-1 mr-2 size-5 self-center justify-self-end text-gray-500 sm:size-4">
+                          <path d="M4.22 6.22a.75.75 0 0 1 1.06 0L8 8.94l2.72-2.72a.75.75 0 1 1 1.06 1.06l-3.25 3.25a.75.75 0 0 1-1.06 0L4.22 7.28a.75.75 0 0 1 0-1.06Z" clip-rule="evenodd" fill-rule="evenodd"></path>
+                        </svg>
+                      </div>
+                    </div>
+                    <div class="col-span-6">
+                      <label for="location" class="block text-sm/6 font-medium text-gray-900">Location</label>
+                      <div class="mt-1">
+                        <input id="location" type="text" readonly disabled
+                               class="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 sm:text-sm/6">
+                      </div>
+                    </div>
+                    <div class="col-span-6">
+                      <label for="contact" class="block text-sm/6 font-medium text-gray-900">Phone Number</label>
+                      <div class="mt-1">
+                        <input id="contact" type="text" readonly disabled
+                               class="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 sm:text-sm/6">
+                      </div>
+                    </div>
+                    <div class="col-span-4">
+                      <label for="partner-status" class="block text-sm font-medium text-gray-900">Status *</label>
+                      <div class="mt-1 grid grid-cols-1">
+                        <select id="partner-status" name="status"
+                                class="row-start-1 col-start-1 pl-3 pr-8 py-1.5 text-sm text-gray-900 rounded-sm appearance-none outline outline-gray-300 outline-offset-1">
+                          <option th:each="statusValue : ${partnerStatusList}"
+                                  th:value="${statusValue}"
+                                  th:text="${statusValue}">
+                          </option>
+                        </select>
+                        <svg viewBox="0 0 16 16" fill="currentColor" data-slot="icon" aria-hidden="true" class="mr-2 row-start-1 col-start-1 size-5 sm:size-4 text-gray-500 justify-self-end self-center pointer-events-none">
+                          <path d="M4.22 6.22a.75.75 0 0 1 1.06 0L8 8.94l2.72-2.72a.75.75 0 1 1 1.06 1.06l-3.25 3.25a.75.75 0 0 1-1.06 0L4.22 7.28a.75.75 0 0 1 0-1.06Z" clip-rule="evenodd" fill-rule="evenodd"></path>
+                        </svg>
+                      </div>
+                    </div>
+                    <div class="col-span-8">
+                      <label for="partner-notes" class="block text-sm font-medium text-gray-900">Notes</label>
+                      <div class="mt-2">
+                        <textarea id="partner-notes" name="notes" rows="4" cols="30"
+                          class="w-full block py-1.5 px-3 text-base sm:text-sm text-gray-900 rounded-sm bg-white outline outline-gray-300 outline-offset-1"></textarea>
+                      </div>
+                    </div>
+                  </div>
+                  <!-- Buttons -->
+                  <div class="mt-6 flex justify-end gap-3">
+                    <button type="button"
+                            onclick="closePartnerModal()"
+                            class="px-3 py-1.5 text-sm rounded-md border border-gray-300 text-gray-700 hover:bg-gray-100">
+                      Cancel
+                    </button>
+                    <!-- FORM SUBMIT -->
+                    <button type="submit" class="px-3 py-1.5 text-sm rounded-md bg-blue-600 text-white hover:bg-blue-700">
+                      Assign
+                    </button>
+                  </div>
+                </form>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <script th:inline="javascript">
+    const banks = [[${banks}]];
+    const assignedPartners = [[${app.assignedPartners}]]
+  </script>
+  <script>
+    function openDeleteModal() {
+        document.getElementById('deleteModal').classList.remove('hidden');
+        document.getElementById('deleteModal').classList.add('flex');
+    }
+    function closeDeleteModal() {
+        document.getElementById('deleteModal').classList.add('hidden');
+        document.getElementById('deleteModal').classList.remove('flex');
+    }
+    function openPartnerModal() {
+        document.getElementById('partnerModal').classList.remove('hidden');
+        document.getElementById('partnerModal').classList.add('flex');
+    }
+    function closePartnerModal() {
+        document.getElementById('partnerModal').classList.add('hidden');
+        document.getElementById('partnerModal').classList.remove('flex');
+    }
+    function onBankChange() {
+      const bankId = document.getElementById("bank").value;
+      const bank = banks.find(b => b.bankId == bankId);
+
+      const partnerDropdown = document.getElementById("bank-partner");
+      partnerDropdown.innerHTML = `<option value="" disabled selected>Choose..</option>`;
+
+      if (!bank) return;
+      bank.partners.forEach(p => {
+        if (!isPartnerPresent(p.id)) {
+          partnerDropdown.innerHTML += `
+            <option value="${p.id}"
+                    data-city="${p.city}"
+                    data-phone="${p.phoneNumber}">
+                ${p.handlerName}
+            </option>
+        `;
+        }
+      });
+      partnerDropdown.disabled = false;
+    }
+
+    function isPartnerPresent(id) {
+      let result = false;
+      result = assignedPartners.some(partner => partner.bankPartnerId === id);
+      return result;
+    }
+
+    document.getElementById('bank-partner').addEventListener('change', function () {
+      const selected = this.options[this.selectedIndex];
+
+      document.getElementById('location').value = selected.dataset.city || '';
+      document.getElementById('contact').value = selected.dataset.phone || '';
+    });
+  </script>
+</div>
+</html>

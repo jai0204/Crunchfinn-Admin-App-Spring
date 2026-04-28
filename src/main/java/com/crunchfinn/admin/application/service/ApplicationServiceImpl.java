@@ -6,8 +6,8 @@ import com.crunchfinn.admin.application.enums.ApplicationSource;
 import com.crunchfinn.admin.application.enums.ApplicationStatus;
 import com.crunchfinn.admin.application.mapper.ApplicationMapper;
 import com.crunchfinn.admin.application.repository.ApplicationDetailsRepository;
-import com.crunchfinn.admin.bankpartner.repository.BankPartnerDetailsRepository;
-import com.crunchfinn.admin.disbursement.service.DisbursementService;
+import com.crunchfinn.admin.common.service.CountryService;
+import com.crunchfinn.admin.common.service.StateCityService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -19,13 +19,17 @@ public class ApplicationServiceImpl implements ApplicationService {
 
     private final ApplicationDetailsRepository repository;
     private final ApplicationMapper mapper;
+    private final StateCityService stateCityService;
+    private final CountryService countryService;
 
     private final String APP_PREFIX = "CF-APP-";
 
     @Autowired
-    public ApplicationServiceImpl(ApplicationDetailsRepository repository, ApplicationMapper mapper) {
+    public ApplicationServiceImpl(ApplicationDetailsRepository repository, ApplicationMapper mapper, StateCityService stateCityService, CountryService countryService) {
         this.repository = repository;
         this.mapper = mapper;
+        this.stateCityService = stateCityService;
+        this.countryService = countryService;
     }
 
     @Override
@@ -62,7 +66,7 @@ public class ApplicationServiceImpl implements ApplicationService {
         ApplicationDetails applicationDetails = repository.findByApplicationId(applicationId)
                 .orElseThrow(() -> new RuntimeException("Application not found!"));
 
-        return mapper.toResponse(applicationDetails);
+        return populateAdditionalFields(mapper.toResponse(applicationDetails));
     }
 
 
@@ -116,5 +120,12 @@ public class ApplicationServiceImpl implements ApplicationService {
     public List<ApplicationStatus> getDisabledStatuses() {
         return List.of(ApplicationStatus.SENT_TO_BANK, ApplicationStatus.SANCTIONED,
                 ApplicationStatus.DISBURSED, ApplicationStatus.REJECTED);
+    }
+
+    private ApplicationResponse populateAdditionalFields(ApplicationResponse response) {
+        response.setStateName(stateCityService.getStateName(response.getState()));
+        response.setTargetCountryName(countryService.getCountryName(response.getTargetCountry()));
+        response.setCoapplicantStateName(stateCityService.getStateName(response.getCoapplicantState()));
+        return response;
     }
 }
