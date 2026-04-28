@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      th:replace="layout/base :: layout">
+  <div th:fragment="content">
+    <div class="w-full max-w-7xl mx-auto bg-white">
+      <div class="px-6 py-4 border-b-1 border-gray-200">
+        <form class="flex flex-wrap gap-y-4 gap-x-6" th:action="@{/applications}" method="get">
+          <div class="flex grow">
+            <input id="name" type="text" name="name" th:value="${name}" placeholder="Search by app applicationId, name or phone number" aria-label="Name"
+                   class="grow py-1.5 px-3 text-sm text-gray-900 rounded-sm outline outline-gray-300 outline-offset-1">
+          </div>
+          <div class="grid grid-cols-1">
+            <select id="status" name="status"
+                    class="row-start-1 col-start-1 pl-3 pr-8 py-1.5 text-sm text-gray-900 rounded-sm appearance-none outline outline-gray-300 outline-offset-1">
+              <option value="" disabled th:selected="${status == null}">Choose Status...</option>
+              <option th:each="statusValue : ${statusList}"
+                      th:value="${statusValue}"
+                      th:text="${statusValue}"
+                      th:selected="${statusValue.name() == status}">
+              </option>
+            </select>
+            <svg viewBox="0 0 16 16" fill="currentColor" data-slot="icon" aria-hidden="true" class="mr-2 row-start-1 col-start-1 size-5 sm:size-4 text-gray-500 justify-self-end self-center pointer-events-none">
+              <path d="M4.22 6.22a.75.75 0 0 1 1.06 0L8 8.94l2.72-2.72a.75.75 0 1 1 1.06 1.06l-3.25 3.25a.75.75 0 0 1-1.06 0L4.22 7.28a.75.75 0 0 1 0-1.06Z" clip-rule="evenodd" fill-rule="evenodd"></path>
+            </svg>
+          </div>
+          <div class="grid grid-cols-1">
+            <select id="source" name="source"
+                    class="row-start-1 col-start-1 pl-3 pr-8 py-1.5 text-sm text-gray-900 rounded-sm appearance-none outline outline-gray-300 outline-offset-1">
+              <option value="" disabled selected>Choose Source...</option>
+              <option th:each="sourceValue : ${sourceList}"
+                      th:value="${sourceValue}"
+                      th:text="${sourceValue}"
+                      th:selected="${sourceValue.name() == source}">
+              </option>
+            </select>
+            <svg viewBox="0 0 16 16" fill="currentColor" data-slot="icon" aria-hidden="true" class="mr-2 row-start-1 col-start-1 size-5 sm:size-4 text-gray-500 justify-self-end self-center pointer-events-none">
+              <path d="M4.22 6.22a.75.75 0 0 1 1.06 0L8 8.94l2.72-2.72a.75.75 0 1 1 1.06 1.06l-3.25 3.25a.75.75 0 0 1-1.06 0L4.22 7.28a.75.75 0 0 1 0-1.06Z" clip-rule="evenodd" fill-rule="evenodd"></path>
+            </svg>
+          </div>
+          <div>
+            <button type="submit" class="py-2 px-3 inline-flex items-center gap-x-1.5 text-sm font-semibold text-white rounded-md shadow-xs bg-blue-600 hover:bg-blue-500">
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-5">
+                <path stroke-linecap="round" stroke-linejoin="round" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z" />
+              </svg>
+              Search
+            </button>
+          </div>
+        </form>
+      </div>
+      <div class="px-6 pt-4 flex justify-end">
+        <a th:href="@{/applications/new}"
+           class="group inline-flex items-center gap-x-1.5 px-3 py-2 text-sm text-blue-600 font-semibold rounded-md bg-white shadow-xs border-blue-600 border hover:bg-blue-600 hover:text-white">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-5 text-blue-600 group-hover:text-white">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+          </svg>
+          Create</a>
+      </div>
+      <div class="py-4 px-6">
+        <div th:if="${applications == null}" class="p-4 sm:p-6 lg:p-10 border-2 border-dashed border-gray-200 rounded-lg">
+          <h2 class="text-base font-semibold text-gray-900">No data to display</h2>
+          <p class="mt-1 text-sm/6 text-gray-500">Use search or select a status to view applications. <br>Just click search to get all applications.</p>
+          <ul role="list" class="py-6 mt-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            <li class="relative p-2 bg-gray-50 border border-gray-200 rounded-lg hover:bg-gray-100" th:each="status : ${statusList}">
+              <a th:href="@{/applications(status=${status})}">
+                <span class="absolute inset-0"></span>
+                <div class="flex">
+                  <div class="mr-4 size-12 flex justify-center items-center bg-blue-600 rounded-lg">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6 text-white">
+                      <path stroke-linecap="round" stroke-linejoin="round" d="m12.75 15 3-3m0 0-3-3m3 3h-7.5M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+                    </svg>
+                  </div>
+                  <div class="flex items-center">
+                    <h3 class="text-sm font-medium text-gray-900" th:text="${status}"></h3>
+                  </div>
+                </div>
+              </a>
+            </li>
+          </ul>
+        </div>
+        <div th:if="${applications != null and #lists.isEmpty(applications)}"
+             class="p-4 sm:p-6 lg:p-10 border-2 border-dashed border-gray-200 rounded-lg">
+          <h2 class="text-base font-semibold text-gray-900">No applications found</h2>
+          <p class="mt-1 text-sm/6 text-gray-500">Try changing filters or search criteria</p>
+        </div>
+        <div th:if="${applications != null and !#lists.isEmpty(applications)}"
+             class="w-full border border-gray-200 rounded-lg overflow-x-auto">
+          <table class="relative min-w-full divide-y-1 divide-gray-300">
+            <thead>
+              <tr>
+                <th scope="col" class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-blue-600">#</th>
+                <th scope="col" class="py-3.5 px-3 text-left text-sm font-semibold text-blue-600">App_ID</th>
+                <th scope="col" class="py-3.5 px-3 text-left text-sm font-semibold text-blue-600">Name</th>
+                <th scope="col" class="py-3.5 px-3 text-left text-sm font-semibold text-blue-600">Phone</th>
+                <th scope="col" class="py-3.5 px-3 text-left text-sm font-semibold text-blue-600">Loan Amount</th>
+                <th scope="col" class="py-3.5 px-3 text-left text-sm font-semibold text-blue-600">Target Country</th>
+                <th scope="col" class="py-3.5 px-3 text-left text-sm font-semibold text-blue-600">Register Time</th>
+                <th scope="col" class="pl-3 py-3.5 pr-4">
+                  <span class="sr-only">View</span>
+                </th>
+              </tr>
+            </thead>
+            <tbody class="divide-y-1 divide-gray-200">
+              <tr th:each="app : ${applications}">
+                <td class="pl-4 pr-3 py-4 text-sm text-gray-600 whitespace-nowrap" th:text="${appStat.count}"></td>
+                <td class="py-4 px-3 text-sm text-gray-600 whitespace-nowrap" th:text="${app.applicationId}"></td>
+                <td class="py-4 px-3 text-sm text-gray-600 whitespace-nowrap" th:text="${app.name}"></td>
+                <td class="py-4 px-3 text-sm text-gray-600 whitespace-nowrap" th:text="${app.phoneNumber}"></td>
+                <td class="py-4 px-3 text-sm text-gray-600 whitespace-nowrap" th:text="${#numbers.formatInteger(app.loanAmount, 1, 'COMMA')}"></td>
+                <td class="py-4 px-3 text-sm text-gray-600 whitespace-nowrap" th:text="${app.targetCountry}"></td>
+                <td class="py-4 px-3 text-sm text-gray-600 whitespace-nowrap" th:text="${#temporals.format(app.createdAt, 'dd MMM yyyy HH:mm:ss')}"></td>
+                <td class="pl-3 pr-4 py-4 text-right text-sm font-medium whitespace-nowrap">
+                  <a th:href="@{/applications/{appId}(appId=${app.applicationId})}" class="text-blue-600 hover:text-blue-800">View</a>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</html>
