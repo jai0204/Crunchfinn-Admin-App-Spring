@@ -1,0 +1,534 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      th:replace="layout/base :: layout">
+<div th:fragment="content">
+  <div class="w-full max-w-7xl mx-auto bg-white">
+    <div class="py-4 lg:py-8 px-6 lg:px-12">
+      <div class="mb-4 text-sm"><span class="font-semibold text-blue-600">App_ID: </span><span class="text-gray-600" th:text="${editForm.applicationId}"></span> </div>
+      <form th:action="@{/applications/{id}/edit(id=${editForm.applicationId})}" th:object="${editForm}" method="post">
+        <div class="space-y-6">
+          <!-- Personal info -->
+          <div class="border-b border-gray-900/10 pb-6">
+            <h2 class="text-base/7 font-semibold text-gray-900">1. Personal Information</h2>
+            <div class="mt-6 grid grid-cols-1 gap-x-8 gap-y-6 sm:grid-cols-6">
+              <div class="sm:col-span-3">
+                <label for="name" class="block text-sm/6 font-medium text-gray-900">Student Name *</label>
+                <div class="mt-2">
+                  <input id="name" type="text" th:field="*{name}" required
+                         class="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 sm:text-sm/6">
+                </div>
+              </div>
+              <div class="sm:col-span-3">
+                <label for="age" class="block text-sm/6 font-medium text-gray-900">Student Age</label>
+                <div class="mt-2">
+                  <input id="age" type="number" th:field="*{age}" min="16" max="50" step="1"
+                         class="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 sm:text-sm/6">
+                </div>
+              </div>
+              <div class="sm:col-span-3">
+                <label for="phone-number" class="block text-sm/6 font-medium text-gray-900">Phone Number</label>
+                <div class="mt-2">
+                  <input id="phone-number" type="text" th:field="*{phoneNumber}" pattern="[0]?[0-9]{10}" maxlength="11"
+                         class="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 sm:text-sm/6">
+                </div>
+              </div>
+              <div class="sm:col-span-3">
+                <label for="email" class="block text-sm/6 font-medium text-gray-900">Email address</label>
+                <div class="mt-2">
+                  <input id="email" type="email" th:field="*{email}"
+                         class="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 sm:text-sm/6">
+                </div>
+              </div>
+              <div class="sm:col-span-3">
+                <div class="grid grid-cols-2 gap-x-6">
+                  <div class="col-span-1">
+                    <label for="state" class="block text-sm/6 font-medium text-gray-900">State</label>
+                    <div class="mt-2 grid grid-cols-1">
+                      <select id="state" th:field="*{state}" th:data-default="${editForm.state}" onchange="cityOptions('city', this.selectedIndex, false)"
+                              class="col-start-1 row-start-1 w-full appearance-none rounded-md bg-white py-1.5 pr-8 pl-3 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 sm:text-sm/6">
+                      </select>
+                      <svg viewBox="0 0 16 16" fill="currentColor" data-slot="icon" aria-hidden="true" class="pointer-events-none col-start-1 row-start-1 mr-2 size-5 self-center justify-self-end text-gray-500 sm:size-4">
+                        <path d="M4.22 6.22a.75.75 0 0 1 1.06 0L8 8.94l2.72-2.72a.75.75 0 1 1 1.06 1.06l-3.25 3.25a.75.75 0 0 1-1.06 0L4.22 7.28a.75.75 0 0 1 0-1.06Z" clip-rule="evenodd" fill-rule="evenodd"></path>
+                      </svg>
+                    </div>
+                  </div>
+                  <div class="col-span-1">
+                    <label for="city" class="block text-sm/6 font-medium text-gray-900">City</label>
+                    <div class="mt-2 grid grid-cols-1">
+                      <select id="city" th:field="*{city}" th:data-default="${editForm.city}"
+                              class="col-start-1 row-start-1 w-full appearance-none rounded-md bg-white py-1.5 pr-8 pl-3 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 sm:text-sm/6">
+                        <option value="" selected>Choose a state..</option>
+                      </select>
+                      <svg viewBox="0 0 16 16" fill="currentColor" data-slot="icon" aria-hidden="true" class="pointer-events-none col-start-1 row-start-1 mr-2 size-5 self-center justify-self-end text-gray-500 sm:size-4">
+                        <path d="M4.22 6.22a.75.75 0 0 1 1.06 0L8 8.94l2.72-2.72a.75.75 0 1 1 1.06 1.06l-3.25 3.25a.75.75 0 0 1-1.06 0L4.22 7.28a.75.75 0 0 1 0-1.06Z" clip-rule="evenodd" fill-rule="evenodd"></path>
+                      </svg>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="sm:col-span-3">
+                <label for="gender" class="block text-sm/6 font-medium text-gray-900">Gender</label>
+                <div class="mt-2 grid grid-cols-1">
+                  <select id="gender" th:field="*{gender}" th:data-default="${editForm.gender}"
+                          class="col-start-1 row-start-1 w-full appearance-none rounded-md bg-white py-1.5 pr-8 pl-3 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 sm:text-sm/6">
+                    <option value="" selected>Choose..</option>
+                    <option th:each="gender : ${genderList}"
+                            th:value="${gender}"
+                            th:text="${gender}"></option>
+                  </select>
+                  <svg viewBox="0 0 16 16" fill="currentColor" data-slot="icon" aria-hidden="true" class="pointer-events-none col-start-1 row-start-1 mr-2 size-5 self-center justify-self-end text-gray-500 sm:size-4">
+                    <path d="M4.22 6.22a.75.75 0 0 1 1.06 0L8 8.94l2.72-2.72a.75.75 0 1 1 1.06 1.06l-3.25 3.25a.75.75 0 0 1-1.06 0L4.22 7.28a.75.75 0 0 1 0-1.06Z" clip-rule="evenodd" fill-rule="evenodd"></path>
+                  </svg>
+                </div>
+              </div>
+            </div>
+          </div>
+          <!-- Target info -->
+          <div class="border-b border-gray-900/10 pb-6">
+            <h2 class="text-base/7 font-semibold text-gray-900">2. Target Information</h2>
+            <div class="mt-6 grid grid-cols-1 gap-x-8 gap-y-6 sm:grid-cols-6">
+              <div class="sm:col-span-3">
+                <label for="target-country" class="block text-sm/6 font-medium text-gray-900">Target Country</label>
+                <div class="mt-2 grid grid-cols-1">
+                  <select id="target-country" th:field="*{targetCountry}" th:data-default="${editForm.targetCountry}" onchange="universityOptions('target-university', 'univListOptions', this.value)"
+                          class="col-start-1 row-start-1 w-full appearance-none rounded-md bg-white py-1.5 pr-8 pl-3 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 sm:text-sm/6">
+                  </select>
+                  <svg viewBox="0 0 16 16" fill="currentColor" data-slot="icon" aria-hidden="true" class="pointer-events-none col-start-1 row-start-1 mr-2 size-5 self-center justify-self-end text-gray-500 sm:size-4">
+                    <path d="M4.22 6.22a.75.75 0 0 1 1.06 0L8 8.94l2.72-2.72a.75.75 0 1 1 1.06 1.06l-3.25 3.25a.75.75 0 0 1-1.06 0L4.22 7.28a.75.75 0 0 1 0-1.06Z" clip-rule="evenodd" fill-rule="evenodd"></path>
+                  </svg>
+                </div>
+              </div>
+              <div class="sm:col-span-3">
+                <label for="target-university" class="block text-sm/6 font-medium text-gray-900">Target University</label>
+                <div class="mt-2">
+                  <input id="target-university" type="text" th:field="*{targetUniversity}" list="univListOptions" placeholder="Choose a country first" disabled
+                         class="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 sm:text-sm/6">
+                  <datalist id="univListOptions"></datalist>
+                </div>
+              </div>
+              <div class="sm:col-span-3">
+                <label for="course-level" class="block text-sm/6 font-medium text-gray-900">Course Level</label>
+                <div class="mt-2 grid grid-cols-1">
+                  <select id="course-level" th:field="*{courseLevel}" th:data-default="${editForm.courseLevel}"
+                          class="col-start-1 row-start-1 w-full appearance-none rounded-md bg-white py-1.5 pr-8 pl-3 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 sm:text-sm/6">
+                    <option value="" selected>Choose..</option>
+                    <option th:each="courseLevel : ${courseLevelList}"
+                            th:value="${courseLevel}"
+                            th:text="${courseLevel}"></option>
+                  </select>
+                  <svg viewBox="0 0 16 16" fill="currentColor" data-slot="icon" aria-hidden="true" class="pointer-events-none col-start-1 row-start-1 mr-2 size-5 self-center justify-self-end text-gray-500 sm:size-4">
+                    <path d="M4.22 6.22a.75.75 0 0 1 1.06 0L8 8.94l2.72-2.72a.75.75 0 1 1 1.06 1.06l-3.25 3.25a.75.75 0 0 1-1.06 0L4.22 7.28a.75.75 0 0 1 0-1.06Z" clip-rule="evenodd" fill-rule="evenodd"></path>
+                  </svg>
+                </div>
+              </div>
+              <div class="sm:col-span-3">
+                <label for="course-name" class="block text-sm/6 font-medium text-gray-900">Course Name</label>
+                <div class="mt-2">
+                  <input id="course-name" type="text" th:field="*{courseName}"
+                         class="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 sm:text-sm/6">
+                </div>
+              </div>
+              <div class="sm:col-span-3">
+                <label for="loan-amount" class="block text-sm/6 font-medium text-gray-900">Loan Amount *</label>
+                <div class="mt-2">
+                  <input id="loan-amount" type="number" th:field="*{loanAmount}" min="100000" max="100000000" required
+                         class="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 sm:text-sm/6">
+                </div>
+              </div>
+              <div class="sm:col-span-3">
+                <label for="intake" class="block text-sm/6 font-medium text-gray-900">Intake</label>
+                <div class="mt-2 grid grid-cols-1">
+                  <select id="intake" th:field="*{intake}" th:data-default="${editForm.intake}"
+                          class="col-start-1 row-start-1 w-full appearance-none rounded-md bg-white py-1.5 pr-8 pl-3 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 sm:text-sm/6">
+                    <option value="" selected>Choose..</option>
+                    <option th:value="'S-' + ${currentYear}"
+                            th:text="'Spring - ' + ${currentYear}"></option>
+                    <option th:value="'F-' + ${currentYear}"
+                            th:text="'Fall - ' + ${currentYear}"></option>
+                    <option th:value="'S-' + ${currentYear + 1}"
+                            th:text="'Spring - ' + ${currentYear + 1}"></option>
+                    <option th:value="'F-' + ${currentYear + 1}"
+                            th:text="'Fall - ' + ${currentYear + 1}"></option>
+                    <option value="O">Other</option>
+                  </select>
+                  <svg viewBox="0 0 16 16" fill="currentColor" data-slot="icon" aria-hidden="true" class="pointer-events-none col-start-1 row-start-1 mr-2 size-5 self-center justify-self-end text-gray-500 sm:size-4">
+                    <path d="M4.22 6.22a.75.75 0 0 1 1.06 0L8 8.94l2.72-2.72a.75.75 0 1 1 1.06 1.06l-3.25 3.25a.75.75 0 0 1-1.06 0L4.22 7.28a.75.75 0 0 1 0-1.06Z" clip-rule="evenodd" fill-rule="evenodd"></path>
+                  </svg>
+                </div>
+              </div>
+              <div class="sm:col-span-3">
+                <fieldset>
+                  <legend class="text-sm/6 font-medium text-gray-900">Enter scores:</legend>
+                  <div class="mt-4 grid grid-cols-2 gap-x-8 gap-y-4">
+                    <div class="col-span-1">
+                      <div class="flex gap-3">
+                        <div class="flex h-6 shrink-0 items-center">
+                          <div class="group grid size-4 grid-cols-1">
+                            <input id="gre" type="checkbox" data-toggle="gre-score" data-action="enable" th:data-check="${editForm.greScore}"
+                                   class="checkbox-enable col-start-1 row-start-1 appearance-none rounded-sm border border-gray-300 bg-white checked:border-blue-600 checked:bg-blue-600 indeterminate:border-blue-600 indeterminate:bg-blue-600 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 disabled:border-gray-300 disabled:bg-gray-100 disabled:checked:bg-gray-100 forced-colors:appearance-auto">
+                            <svg viewBox="0 0 14 14" fill="none" class="pointer-events-none col-start-1 row-start-1 size-3.5 self-center justify-self-center stroke-white group-has-disabled:stroke-gray-950/25">
+                              <path d="M3 8L6 11L11 3.5" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="opacity-0 group-has-checked:opacity-100"></path>
+                              <path d="M3 7H11" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="opacity-0 group-has-indeterminate:opacity-100"></path>
+                            </svg>
+                          </div>
+                        </div>
+                        <div class="text-sm/6">
+                          <label for="gre" class="font-medium text-gray-900">GRE</label>
+                        </div>
+                      </div>
+                      <div class="mt-2">
+                        <input id="gre-score" type="number" th:field="*{greScore}" min="260" max="340" step="1" disabled required
+                               class="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 sm:text-sm/6">
+                      </div>
+                    </div>
+                    <div class="col-span-1">
+                      <div class="flex gap-3">
+                        <div class="flex h-6 shrink-0 items-center">
+                          <div class="group grid size-4 grid-cols-1">
+                            <input id="ielts" type="checkbox" data-toggle="ielts-score" data-action="enable" th:data-check="${editForm.ieltsScore}"
+                                   class="checkbox-enable col-start-1 row-start-1 appearance-none rounded-sm border border-gray-300 bg-white checked:border-blue-600 checked:bg-blue-600 indeterminate:border-blue-600 indeterminate:bg-blue-600 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 disabled:border-gray-300 disabled:bg-gray-100 disabled:checked:bg-gray-100 forced-colors:appearance-auto">
+                            <svg viewBox="0 0 14 14" fill="none" class="pointer-events-none col-start-1 row-start-1 size-3.5 self-center justify-self-center stroke-white group-has-disabled:stroke-gray-950/25">
+                              <path d="M3 8L6 11L11 3.5" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="opacity-0 group-has-checked:opacity-100"></path>
+                              <path d="M3 7H11" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="opacity-0 group-has-indeterminate:opacity-100"></path>
+                            </svg>
+                          </div>
+                        </div>
+                        <div class="text-sm/6">
+                          <label for="ielts" class="font-medium text-gray-900">IELTS</label>
+                        </div>
+                      </div>
+                      <div class="mt-2">
+                        <input id="ielts-score" type="number" th:field="*{ieltsScore}" min="1" max="9" step="1" disabled required
+                               class="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 sm:text-sm/6">
+                      </div>
+                    </div>
+                    <div class="col-span-1">
+                      <div class="flex gap-3">
+                        <div class="flex h-6 shrink-0 items-center">
+                          <div class="group grid size-4 grid-cols-1">
+                            <input id="pte" type="checkbox" data-toggle="pte-score" data-action="enable" th:data-check="${editForm.pteScore}"
+                                   class="checkbox-enable col-start-1 row-start-1 appearance-none rounded-sm border border-gray-300 bg-white checked:border-blue-600 checked:bg-blue-600 indeterminate:border-blue-600 indeterminate:bg-blue-600 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 disabled:border-gray-300 disabled:bg-gray-100 disabled:checked:bg-gray-100 forced-colors:appearance-auto">
+                            <svg viewBox="0 0 14 14" fill="none" class="pointer-events-none col-start-1 row-start-1 size-3.5 self-center justify-self-center stroke-white group-has-disabled:stroke-gray-950/25">
+                              <path d="M3 8L6 11L11 3.5" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="opacity-0 group-has-checked:opacity-100"></path>
+                              <path d="M3 7H11" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="opacity-0 group-has-indeterminate:opacity-100"></path>
+                            </svg>
+                          </div>
+                        </div>
+                        <div class="text-sm/6">
+                          <label for="pte" class="font-medium text-gray-900">PTE</label>
+                        </div>
+                      </div>
+                      <div class="mt-2">
+                        <input id="pte-score" type="number" th:field="*{pteScore}" min="10" max="90" step="1" disabled required
+                               class="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 sm:text-sm/6">
+                      </div>
+                    </div>
+                    <div class="col-span-1">
+                      <div class="flex gap-3">
+                        <div class="flex h-6 shrink-0 items-center">
+                          <div class="group grid size-4 grid-cols-1">
+                            <input id="toefl" type="checkbox" data-toggle="toefl-score" data-action="enable" th:data-check="${editForm.toeflScore}"
+                                   class="checkbox-enable col-start-1 row-start-1 appearance-none rounded-sm border border-gray-300 bg-white checked:border-blue-600 checked:bg-blue-600 indeterminate:border-blue-600 indeterminate:bg-blue-600 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 disabled:border-gray-300 disabled:bg-gray-100 disabled:checked:bg-gray-100 forced-colors:appearance-auto">
+                            <svg viewBox="0 0 14 14" fill="none" class="pointer-events-none col-start-1 row-start-1 size-3.5 self-center justify-self-center stroke-white group-has-disabled:stroke-gray-950/25">
+                              <path d="M3 8L6 11L11 3.5" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="opacity-0 group-has-checked:opacity-100"></path>
+                              <path d="M3 7H11" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="opacity-0 group-has-indeterminate:opacity-100"></path>
+                            </svg>
+                          </div>
+                        </div>
+                        <div class="text-sm/6">
+                          <label for="toefl" class="font-medium text-gray-900">TOEFL</label>
+                        </div>
+                      </div>
+                      <div class="mt-2">
+                        <input id="toefl-score" type="number" th:field="*{toeflScore}" min="0" max="120" step="1" disabled required
+                               class="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 sm:text-sm/6">
+                      </div>
+                    </div>
+                  </div>
+                </fieldset>
+              </div>
+              <div class="sm:col-span-3">
+                <fieldset>
+                  <legend class="text-sm/6 font-medium text-gray-900">Have admit letter?</legend>
+                  <div class="mt-4 flex flex-col gap-2">
+                    <div class="flex items-center gap-x-3">
+                      <input id="admit-letter-yes" type="radio" th:field="*{hasAdmit}" value="1" th:data-radio="${editForm.hasAdmit}"
+                             class="relative size-4 appearance-none rounded-full border border-gray-300 bg-white before:absolute before:inset-1 before:rounded-full before:bg-white not-checked:before:hidden checked:border-blue-600 checked:bg-blue-600 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 disabled:border-gray-300 disabled:bg-gray-100 disabled:before:bg-gray-400 forced-colors:appearance-auto forced-colors:before:hidden">
+                      <label for="admit-letter-yes" class="block text-sm/6 font-medium text-gray-900">Yes</label>
+                    </div>
+                    <div class="flex items-center gap-x-3">
+                      <input id="admit-letter-no" type="radio" th:field="*{hasAdmit}" value="0" th:data-radio="${editForm.hasAdmit}"
+                             class="relative size-4 appearance-none rounded-full border border-gray-300 bg-white before:absolute before:inset-1 before:rounded-full before:bg-white not-checked:before:hidden checked:border-blue-600 checked:bg-blue-600 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 disabled:border-gray-300 disabled:bg-gray-100 disabled:before:bg-gray-400 forced-colors:appearance-auto forced-colors:before:hidden">
+                      <label for="admit-letter-no" class="block text-sm/6 font-medium text-gray-900">No</label>
+                    </div>
+                  </div>
+                </fieldset>
+              </div>
+            </div>
+          </div>
+          <!-- Experience info -->
+          <div class="border-b border-gray-900/10 pb-6">
+            <h2 class="text-base/7 font-semibold text-gray-900">3. Experience Information</h2>
+            <div class="mt-6 grid grid-cols-1 gap-x-8 gap-y-6 sm:grid-cols-6">
+              <div class="sm:col-span-3">
+                <fieldset>
+                  <legend class="text-sm/6 font-medium text-gray-900">Do you have any work experience?</legend>
+                  <div class="mt-4 flex flex-col gap-2">
+                    <div class="flex items-center gap-x-3">
+                      <input id="experience-yes" type="radio" th:field="*{hasWorkExperience}" value="1" th:data-radio="${editForm.hasWorkExperience}" data-toggle="years-experience" data-action="enable"
+                             class="radio-toggle relative size-4 appearance-none rounded-full border border-gray-300 bg-white before:absolute before:inset-1 before:rounded-full before:bg-white not-checked:before:hidden checked:border-blue-600 checked:bg-blue-600 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 disabled:border-gray-300 disabled:bg-gray-100 disabled:before:bg-gray-400 forced-colors:appearance-auto forced-colors:before:hidden">
+                      <label for="experience-yes" class="block text-sm/6 font-medium text-gray-900">Yes</label>
+                    </div>
+                    <div class="flex items-center gap-x-3">
+                      <input id="experience-no" type="radio" th:field="*{hasWorkExperience}" value="0" th:data-radio="${editForm.hasWorkExperience}" data-toggle="years-experience" data-action="disable"
+                             class="radio-toggle relative size-4 appearance-none rounded-full border border-gray-300 bg-white before:absolute before:inset-1 before:rounded-full before:bg-white not-checked:before:hidden checked:border-blue-600 checked:bg-blue-600 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 disabled:border-gray-300 disabled:bg-gray-100 disabled:before:bg-gray-400 forced-colors:appearance-auto forced-colors:before:hidden">
+                      <label for="experience-no" class="block text-sm/6 font-medium text-gray-900">No</label>
+                    </div>
+                  </div>
+                </fieldset>
+              </div>
+              <div class="sm:col-span-3">
+                <label for="years-experience" class="block text-sm/6 font-medium text-gray-900">Experience (in years) *</label>
+                <div class="mt-2">
+                  <input id="years-experience" type="number" th:field="*{experienceYears}" min="0" step="1" disabled required
+                         class="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 sm:text-sm/6">
+                </div>
+              </div>
+              <div class="sm:col-span-3">
+                <fieldset>
+                  <legend class="text-sm/6 font-medium text-gray-900">Are you currently working?</legend>
+                  <div class="mt-4 flex flex-col gap-2">
+                    <div class="flex items-center gap-x-3">
+                      <input id="working-yes" type="radio" th:field="*{currentlyWorking}" value="1" th:data-radio="${editForm.currentlyWorking}" data-toggle="student-income,student-emi" data-action="enable"
+                             class="radio-toggle relative size-4 appearance-none rounded-full border border-gray-300 bg-white before:absolute before:inset-1 before:rounded-full before:bg-white not-checked:before:hidden checked:border-blue-600 checked:bg-blue-600 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 disabled:border-gray-300 disabled:bg-gray-100 disabled:before:bg-gray-400 forced-colors:appearance-auto forced-colors:before:hidden">
+                      <label for="working-yes" class="block text-sm/6 font-medium text-gray-900">Yes</label>
+                    </div>
+                    <div class="flex items-center gap-x-3">
+                      <input id="working-no" type="radio" th:field="*{currentlyWorking}" value="0" th:data-radio="${editForm.currentlyWorking}" data-toggle="student-income,student-emi" data-action="disable"
+                             class="radio-toggle relative size-4 appearance-none rounded-full border border-gray-300 bg-white before:absolute before:inset-1 before:rounded-full before:bg-white not-checked:before:hidden checked:border-blue-600 checked:bg-blue-600 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 disabled:border-gray-300 disabled:bg-gray-100 disabled:before:bg-gray-400 forced-colors:appearance-auto forced-colors:before:hidden">
+                      <label for="working-no" class="block text-sm/6 font-medium text-gray-900">No</label>
+                    </div>
+                  </div>
+                </fieldset>
+              </div>
+              <div class="sm:col-span-3">
+                <div class="grid grid-cols-2 gap-x-8">
+                  <div class="col-span-1">
+                    <label for="student-income" class="block text-sm/6 font-medium text-gray-900">Income (per month) *</label>
+                    <div class="mt-2">
+                      <input id="student-income" type="number" th:field="*{income}" min="0" disabled required
+                             class="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 sm:text-sm/6">
+                    </div>
+                  </div>
+                  <div class="col-span-1">
+                    <label for="student-emi" class="block text-sm/6 font-medium text-gray-900">EMI (if any)</label>
+                    <div class="mt-2">
+                      <input id="student-emi" type="number" th:field="*{emi}" min="0" disabled
+                             class="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 sm:text-sm/6">
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <!-- Co-Applicant info -->
+          <div class="border-b border-gray-900/10 pb-6">
+            <h2 class="text-base/7 font-semibold text-gray-900">4. Co-Applicant Information</h2>
+            <div class="mt-6 grid grid-cols-1 gap-x-8 gap-y-6 sm:grid-cols-6">
+              <div class="sm:col-span-3">
+                <label for="coapplicant-income" class="block text-sm/6 font-medium text-gray-900">Income (per month)</label>
+                <div class="mt-2">
+                  <input id="coapplicant-income" type="number" th:field="*{coapplicantIncome}" min="0"
+                         class="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 sm:text-sm/6">
+                </div>
+              </div>
+              <div class="sm:col-span-3">
+                <label for="noe" class="block text-sm/6 font-medium text-gray-900">Nature of Employment</label>
+                <div class="mt-2 grid grid-cols-1">
+                  <select id="noe" th:field="*{coapplicantNoe}" th:data-default="${editForm.coapplicantNoe}"
+                          class="col-start-1 row-start-1 w-full appearance-none rounded-md bg-white py-1.5 pr-8 pl-3 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 sm:text-sm/6">
+                    <option value="" selected>Choose..</option>
+                    <option th:each="coapplicantNoe : ${coapplicantNoeList}"
+                            th:value="${coapplicantNoe}"
+                            th:text="${coapplicantNoe}"></option>
+                  </select>
+                  <svg viewBox="0 0 16 16" fill="currentColor" data-slot="icon" aria-hidden="true" class="pointer-events-none col-start-1 row-start-1 mr-2 size-5 self-center justify-self-end text-gray-500 sm:size-4">
+                    <path d="M4.22 6.22a.75.75 0 0 1 1.06 0L8 8.94l2.72-2.72a.75.75 0 1 1 1.06 1.06l-3.25 3.25a.75.75 0 0 1-1.06 0L4.22 7.28a.75.75 0 0 1 0-1.06Z" clip-rule="evenodd" fill-rule="evenodd"></path>
+                  </svg>
+                </div>
+              </div>
+              <div class="sm:col-span-3">
+                <div class="grid grid-cols-2 gap-x-6">
+                  <div class="col-span-1">
+                    <label for="co-state" class="block text-sm/6 font-medium text-gray-900">State</label>
+                    <div class="mt-2 grid grid-cols-1">
+                      <select id="co-state" th:field="*{coapplicantState}" th:data-default="${editForm.coapplicantState}" onchange="cityOptions('co-city', this.selectedIndex, false)"
+                              class="col-start-1 row-start-1 w-full appearance-none rounded-md bg-white py-1.5 pr-8 pl-3 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 sm:text-sm/6">
+                      </select>
+                      <svg viewBox="0 0 16 16" fill="currentColor" data-slot="icon" aria-hidden="true" class="pointer-events-none col-start-1 row-start-1 mr-2 size-5 self-center justify-self-end text-gray-500 sm:size-4">
+                        <path d="M4.22 6.22a.75.75 0 0 1 1.06 0L8 8.94l2.72-2.72a.75.75 0 1 1 1.06 1.06l-3.25 3.25a.75.75 0 0 1-1.06 0L4.22 7.28a.75.75 0 0 1 0-1.06Z" clip-rule="evenodd" fill-rule="evenodd"></path>
+                      </svg>
+                    </div>
+                  </div>
+                  <div class="col-span-1">
+                    <label for="co-city" class="block text-sm/6 font-medium text-gray-900">City</label>
+                    <div class="mt-2 grid grid-cols-1">
+                      <select id="co-city" th:field="*{coapplicantCity}" th:data-default="${editForm.coapplicantCity}"
+                              class="col-start-1 row-start-1 w-full appearance-none rounded-md bg-white py-1.5 pr-8 pl-3 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 sm:text-sm/6">
+                        <option value="" selected>Choose a state..</option>
+                      </select>
+                      <svg viewBox="0 0 16 16" fill="currentColor" data-slot="icon" aria-hidden="true" class="pointer-events-none col-start-1 row-start-1 mr-2 size-5 self-center justify-self-end text-gray-500 sm:size-4">
+                        <path d="M4.22 6.22a.75.75 0 0 1 1.06 0L8 8.94l2.72-2.72a.75.75 0 1 1 1.06 1.06l-3.25 3.25a.75.75 0 0 1-1.06 0L4.22 7.28a.75.75 0 0 1 0-1.06Z" clip-rule="evenodd" fill-rule="evenodd"></path>
+                      </svg>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="sm:col-span-3">
+                <label for="co-emi" class="block text-sm/6 font-medium text-gray-900">EMI (if any)</label>
+                <div class="mt-2">
+                  <input id="co-emi" type="number" th:field="*{coapplicantEmi}" min="0"
+                         class="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 sm:text-sm/6">
+                </div>
+              </div>
+            </div>
+          </div>
+          <!-- Collateral info -->
+          <div class="border-b border-gray-900/10 pb-6">
+            <h2 class="text-base/7 font-semibold text-gray-900">4. Collateral Information</h2>
+            <div class="mt-6 grid grid-cols-1 gap-x-8 gap-y-6 sm:grid-cols-6">
+              <div class="sm:col-span-3">
+                <fieldset>
+                  <legend class="text-sm/6 font-medium text-gray-900">Do you have collateral?</legend>
+                  <div class="mt-4 flex flex-col gap-2">
+                    <div class="flex items-center gap-x-3">
+                      <input id="collateral-yes" type="radio" th:field="*{hasCollateral}" value="1" th:data-radio="${editForm.hasCollateral}" data-toggle="collateral-category,collateral-value,collateral-city,collateral-pincode" data-action="enable"
+                             class="radio-toggle relative size-4 appearance-none rounded-full border border-gray-300 bg-white before:absolute before:inset-1 before:rounded-full before:bg-white not-checked:before:hidden checked:border-blue-600 checked:bg-blue-600 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 disabled:border-gray-300 disabled:bg-gray-100 disabled:before:bg-gray-400 forced-colors:appearance-auto forced-colors:before:hidden">
+                      <label for="collateral-yes" class="block text-sm/6 font-medium text-gray-900">Yes</label>
+                    </div>
+                    <div class="flex items-center gap-x-3">
+                      <input id="collateral-no" type="radio" th:field="*{hasCollateral}" value="0" th:data-radio="${editForm.hasCollateral}" data-toggle="collateral-category,collateral-value,collateral-city,collateral-pincode" data-action="disable"
+                             class="radio-toggle relative size-4 appearance-none rounded-full border border-gray-300 bg-white before:absolute before:inset-1 before:rounded-full before:bg-white not-checked:before:hidden checked:border-blue-600 checked:bg-blue-600 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 disabled:border-gray-300 disabled:bg-gray-100 disabled:before:bg-gray-400 forced-colors:appearance-auto forced-colors:before:hidden">
+                      <label for="collateral-no" class="block text-sm/6 font-medium text-gray-900">No</label>
+                    </div>
+                  </div>
+                </fieldset>
+              </div>
+              <div class="sm:col-span-3">
+                <label for="collateral-category" class="block text-sm/6 font-medium text-gray-900">Collateral Category</label>
+                <div class="mt-2 grid grid-cols-1">
+                  <select id="collateral-category" th:field="*{collateralCategory}" th:data-default="${editForm.collateralCategory}" disabled
+                          class="col-start-1 row-start-1 w-full appearance-none rounded-md bg-white py-1.5 pr-8 pl-3 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 sm:text-sm/6">
+                    <option value="" selected>Choose..</option>
+                    <option th:each="collateralCategory : ${collateralCategoryList}"
+                            th:value="${collateralCategory}"
+                            th:text="${collateralCategory}"></option>
+                  </select>
+                  <svg viewBox="0 0 16 16" fill="currentColor" data-slot="icon" aria-hidden="true" class="pointer-events-none col-start-1 row-start-1 mr-2 size-5 self-center justify-self-end text-gray-500 sm:size-4">
+                    <path d="M4.22 6.22a.75.75 0 0 1 1.06 0L8 8.94l2.72-2.72a.75.75 0 1 1 1.06 1.06l-3.25 3.25a.75.75 0 0 1-1.06 0L4.22 7.28a.75.75 0 0 1 0-1.06Z" clip-rule="evenodd" fill-rule="evenodd"></path>
+                  </svg>
+                </div>
+              </div>
+              <div class="sm:col-span-3">
+                <label for="collateral-value" class="block text-sm/6 font-medium text-gray-900">Collateral Value *</label>
+                <div class="mt-2">
+                  <input id="collateral-value" type="number" th:field="*{collateralValue}" min="0" disabled required
+                         class="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 sm:text-sm/6">
+                </div>
+              </div>
+              <div class="sm:col-span-3">
+                <div class="grid grid-cols-2 gap-x-6">
+                  <div class="col-span-1">
+                    <label for="collateral-city" class="block text-sm/6 font-medium text-gray-900">Collateral City</label>
+                    <div class="mt-2">
+                      <input id="collateral-city" type="text" th:field="*{collateralCity}" list="cityListOptions" placeholder="Type to search" disabled
+                             class="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 sm:text-sm/6">
+                      <datalist id="cityListOptions"></datalist>
+                    </div>
+                  </div>
+                  <div class="col-span-1">
+                    <label for="collateral-pincode" class="block text-sm/6 font-medium text-gray-900">Pincode</label>
+                    <div class="mt-2">
+                      <input id="collateral-pincode" type="text" th:field="*{collateralPincode}" pattern="[1-9]{1}[0-9]{5}" maxlength="6" disabled
+                             class="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 sm:text-sm/6">
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <!-- Academic info -->
+          <div class="border-b border-gray-900/10 pb-6">
+            <h2 class="text-base/7 font-semibold text-gray-900">5. Academic Information</h2>
+            <div class="mt-6 grid grid-cols-1 gap-x-8 gap-y-6 sm:grid-cols-6">
+              <div class="sm:col-span-3">
+                <label for="academic-university" class="block text-sm/6 font-medium text-gray-900">School/University</label>
+                <div class="mt-2">
+                  <input id="academic-university" type="text" th:field="*{academicUniversity}" list="inUnivListOptions" placeholder="Type to search.."
+                         class="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 sm:text-sm/6">
+                  <datalist id="inUnivListOptions"></datalist>
+                </div>
+              </div>
+              <div class="sm:col-span-3">
+                <label for="academic-course" class="block text-sm/6 font-medium text-gray-900">Course</label>
+                <div class="mt-2 grid grid-cols-1">
+                  <select id="academic-course" th:field="*{academicCourse}" th:data-default="${editForm.academicCourse}"
+                          class="col-start-1 row-start-1 w-full appearance-none rounded-md bg-white py-1.5 pr-8 pl-3 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 sm:text-sm/6">
+                    <option value="" selected>Choose..</option>
+                    <option value="Bachelors">Bachelors</option>
+                    <option value="Masters">Masters</option>
+                    <option value="10+2">10+2</option>
+                    <option value="PhD/Doctorate">PhD/Doctorate</option>
+                    <option value="Other">Other</option>
+                  </select>
+                  <svg viewBox="0 0 16 16" fill="currentColor" data-slot="icon" aria-hidden="true" class="pointer-events-none col-start-1 row-start-1 mr-2 size-5 self-center justify-self-end text-gray-500 sm:size-4">
+                    <path d="M4.22 6.22a.75.75 0 0 1 1.06 0L8 8.94l2.72-2.72a.75.75 0 1 1 1.06 1.06l-3.25 3.25a.75.75 0 0 1-1.06 0L4.22 7.28a.75.75 0 0 1 0-1.06Z" clip-rule="evenodd" fill-rule="evenodd"></path>
+                  </svg>
+                </div>
+              </div>
+              <div class="sm:col-span-3">
+                <div class="grid grid-cols-2 gap-x-8">
+                  <div class="col-span-1">
+                    <label for="cgpa" class="block text-sm/6 font-medium text-gray-900">CGPA (out of 10)</label>
+                    <div class="mt-2">
+                      <input id="cgpa" type="number" th:field="*{cgpa}" min="1" max="10" step="0.1"
+                             class="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 sm:text-sm/6">
+                    </div>
+                  </div>
+                  <div class="col-span-1">
+                    <label for="backlogs" class="block text-sm/6 font-medium text-gray-900">Backlogs (if any)</label>
+                    <div class="mt-2">
+                      <input id="backlogs" type="number" th:field="*{backlogs}" min="0" max="20" step="1"
+                             class="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 sm:text-sm/6">
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="mt-6 flex items-center gap-x-6">
+            <button type="submit" class="rounded-md bg-blue-600 px-3 py-2 text-sm font-semibold text-white shadow-xs hover:bg-blue-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600">
+              Update
+            </button>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+  <script type="text/javascript" th:src="@{/js/formHelper.js}"></script>
+  <script type="text/javascript" th:src="@{/js/stateCity.js}"></script>
+  <script type="text/javascript">
+    loadLists(function () {
+      stateOptions(['state','co-state'], false);
+      countryOptions('target-country');
+      allCityOptions('cityListOptions');
+      indianUniversityOptions('inUnivListOptions')
+      selectDefault(['state','city','gender','target-country','course-level',
+        'intake','noe','co-state','co-city','collateral-category','academic-course']);
+      checkDefault(['gre','ielts','pte','toefl']);
+      radioDefault(['admit-letter-yes','admit-letter-no','experience-yes','experience-no',
+        'working-yes','working-no','collateral-yes','collateral-no']);
+    });
+  </script>
+</div>
+</html>

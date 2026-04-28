@@ -93,4 +93,34 @@ public class ApplicationController {
 
         return "applications/view";
     }
+
+    @GetMapping("/{applicationId}/edit")
+    public String editPage(@PathVariable String applicationId,
+                           HttpServletRequest request,
+                           Model model) {
+        ApplicationResponse response = applicationService.getApplication(applicationId);
+
+        model.addAttribute("editForm", response);
+        model.addAttribute("genderList", Gender.values());
+        model.addAttribute("courseLevelList", CourseLevel.values());
+        model.addAttribute("coapplicantNoeList", ApplicantNOE.values());
+        model.addAttribute("collateralCategoryList", CollateralCategory.values());
+        int currentYear = java.time.Year.now().getValue();
+        model.addAttribute("currentYear", currentYear);
+        model.addAttribute("currentPath", request.getRequestURI());
+
+        return "applications/edit";
+    }
+
+    @PostMapping("/{applicationId}/edit")
+    public String updateApplication(@PathVariable String applicationId,
+                                    @ModelAttribute UpdateApplicationRequest request,
+                                    RedirectAttributes redirectAttributes) {
+
+        applicationService.updateApplication(applicationId, request);
+
+        redirectAttributes.addFlashAttribute("success", "Application updated successfully.");
+
+        return "redirect:/applications/" + applicationId;
+    }
 }
