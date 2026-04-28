@@ -94,6 +94,16 @@ public class ApplicationController {
         return "applications/view";
     }
 
+    @PostMapping("/admin-update")
+    public String updateAdminDetails(@ModelAttribute("adminForm") AdminUpdateRequest request,
+                                     RedirectAttributes redirectAttributes) {
+        applicationService.updateAdminDetails(request);
+
+        redirectAttributes.addFlashAttribute("success", "Admin details updated successfully.");
+
+        return "redirect:/applications/" + request.getApplicationId();
+    }
+
     @GetMapping("/{applicationId}/edit")
     public String editPage(@PathVariable String applicationId,
                            HttpServletRequest request,
@@ -122,5 +132,17 @@ public class ApplicationController {
         redirectAttributes.addFlashAttribute("success", "Application updated successfully.");
 
         return "redirect:/applications/" + applicationId;
+    }
+
+    @PostMapping("/{applicationId}/delete")
+    public String deleteApplication(@PathVariable String applicationId,
+                                    RedirectAttributes redirectAttributes) {
+
+        applicationService.deleteApplication(applicationId);
+
+        redirectAttributes.addFlashAttribute("success",
+                "Application deleted successfully.");
+
+        return "redirect:/applications";
     }
 }
