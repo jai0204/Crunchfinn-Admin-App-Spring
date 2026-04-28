@@ -1,6 +1,7 @@
 package com.crunchfinn.admin.application.mapper;
 
 import com.crunchfinn.admin.application.dto.*;
+import com.crunchfinn.admin.application.entity.ApplicationBankPartner;
 import com.crunchfinn.admin.application.entity.ApplicationDetails;
 import org.springframework.stereotype.Component;
 
@@ -113,6 +114,16 @@ public class ApplicationMapper {
         response.setId(application.getId());
         response.setApplicationId(application.getApplicationId());
 
+        if (application.getAssignedPartners() != null) {
+            List<ApplicationBankPartnerResponse> partners =
+                    application.getAssignedPartners()
+                            .stream()
+                            .map(this::mapToPartnerResponse)
+                            .toList();
+
+            response.setAssignedPartners(partners);
+        }
+
         response.setName(application.getName());
         response.setAge(application.getAge());
         response.setGender(application.getGender());
@@ -165,5 +176,23 @@ public class ApplicationMapper {
         response.setUpdatedAt(application.getUpdatedAt());
 
         return response;
+    }
+
+    private ApplicationBankPartnerResponse mapToPartnerResponse(ApplicationBankPartner abp) {
+        ApplicationBankPartnerResponse dto = new ApplicationBankPartnerResponse();
+
+        dto.setId(abp.getId());
+        dto.setBankPartnerId(abp.getBankPartner().getId());
+
+        dto.setHandlerName(abp.getBankPartner().getHandlerName());
+        dto.setCity(abp.getBankPartner().getCity());
+        dto.setHandlerPhoneNumber(abp.getBankPartner().getHandlerPhoneNumber());
+
+        dto.setBankName(abp.getBankPartner().getBank().getName());
+
+        dto.setStatus(abp.getStatus());
+        dto.setNotes(abp.getNotes());
+
+        return dto;
     }
 }

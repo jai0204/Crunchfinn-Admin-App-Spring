@@ -20,6 +20,8 @@ public class ApplicationDetails {
     @Column(name = "application_id", unique = true, length = 20)
     private String applicationId;
 
+    @OneToMany(mappedBy = "application", fetch = FetchType.LAZY)
+    private List<ApplicationBankPartner> assignedPartners;
 
     /* Basic Info */
     @Column(name = "name", length = 100)
@@ -574,5 +576,13 @@ public class ApplicationDetails {
                 ", createdAt=" + createdAt +
                 ", updatedAt=" + updatedAt +
                 '}';
+    }
+
+    public List<ApplicationBankPartner> getAssignedPartners() {
+        return assignedPartners;
+    }
+
+    public void setAssignedPartners(List<ApplicationBankPartner> assignedPartners) {
+        this.assignedPartners = assignedPartners;
     }
 }

@@ -3,6 +3,8 @@ package com.crunchfinn.admin.application.controller;
 import com.crunchfinn.admin.application.dto.*;
 import com.crunchfinn.admin.application.enums.*;
 import com.crunchfinn.admin.application.service.ApplicationService;
+import com.crunchfinn.admin.bankpartner.dto.BankWithPartnersDTO;
+import com.crunchfinn.admin.bankpartner.service.BankPartnerService;
 import com.crunchfinn.admin.common.enums.Gender;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,10 +19,12 @@ import java.util.List;
 @RequestMapping("/applications")
 public class ApplicationController {
     private final ApplicationService applicationService;
+    private final BankPartnerService bankPartnerService;
 
     @Autowired
-    public ApplicationController(ApplicationService applicationService) {
+    public ApplicationController(ApplicationService applicationService, BankPartnerService bankPartnerService) {
         this.applicationService = applicationService;
+        this.bankPartnerService = bankPartnerService;
     }
 
     @GetMapping
@@ -70,11 +74,15 @@ public class ApplicationController {
         return "redirect:/applications/" + response.getApplicationId();
     }
 
+    // view application
     @GetMapping("/{applicationId}")
     public String viewApplication(@PathVariable String applicationId,
                                   HttpServletRequest request,
                                   Model model) {
-        ApplicationResponse response = applicationService.getApplication(applicationId);
+        ApplicationResponse response = applicationService.getApplicationWithPartners(applicationId);
+
+        List<BankWithPartnersDTO> banksWithPartners =
+                bankPartnerService.getBanksWithPartners();
 
         AdminUpdateRequest adminForm = new AdminUpdateRequest();
 
@@ -84,6 +92,7 @@ public class ApplicationController {
         adminForm.setAdminNotes(response.getAdminNotes());
 
         model.addAttribute("app", response);
+        model.addAttribute("banks", banksWithPartners);
         model.addAttribute("adminForm", adminForm);
         model.addAttribute("statusList", ApplicationStatus.values());
         model.addAttribute("sourceList", ApplicationSource.values());
@@ -144,5 +153,39 @@ public class ApplicationController {
                 "Application deleted successfully.");
 
         return "redirect:/applications";
+    }
+
+    @PostMapping("/{applicationId}/assign-partner")
+    public String assignPartner(
+            @PathVariable String applicationId,
+            @ModelAttribute AssignBankPartnerRequest request,
+            RedirectAttributes redirectAttributes) {
+
+        try {
+            applicationService.assignPartner(applicationId, request);
+
+            redirectAttributes.addFlashAttribute("success", "Partner assigned successfully");
+
+        } catch (IllegalArgumentException e) {
+            redirectAttributes.addFlashAttribute("errorMessage", e.getMessage());
+        }
+
+        return "redirect:/applications/" + applicationId;
+    }
+
+    @PostMapping("/{applicationId}/update-partners")
+    public String updatePartners(
+            @PathVariable String applicationId,
+            @ModelAttribute UpdateApplicationBankPartnersRequest request,
+            RedirectAttributes redirectAttributes) {
+
+        try {
+            applicationService.updateAll(request.getApplicationId(), request);
+            redirectAttributes.addFlashAttribute("success", "Partners updated successfully");
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("errorMessage", e.getMessage());
+        }
+
+        return "redirect:/applications/" + applicationId;
     }
 }

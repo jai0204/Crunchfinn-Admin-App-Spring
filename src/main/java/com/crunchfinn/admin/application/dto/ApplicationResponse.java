@@ -12,6 +12,8 @@ public class ApplicationResponse {
     private Long id;
     private String applicationId;
 
+    private List<ApplicationBankPartnerResponse> assignedPartners;
+
     // basic info
     private String name;
     private Byte age;
@@ -497,5 +499,13 @@ public class ApplicationResponse {
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public List<ApplicationBankPartnerResponse> getAssignedPartners() {
+        return assignedPartners;
+    }
+
+    public void setAssignedPartners(List<ApplicationBankPartnerResponse> assignedPartners) {
+        this.assignedPartners = assignedPartners;
     }
 }

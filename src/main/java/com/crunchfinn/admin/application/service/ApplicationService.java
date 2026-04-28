@@ -14,4 +14,7 @@ public interface ApplicationService {
     void updateAdminDetails(AdminUpdateRequest request);
     void deleteApplication(String applicationId);
     List<ApplicationStatus> getDisabledStatuses();
+    ApplicationResponse getApplicationWithPartners(String applicationId);
+    void assignPartner(String applicationId, AssignBankPartnerRequest request);
+    void updateAll(Long id, UpdateApplicationBankPartnersRequest request);
 }

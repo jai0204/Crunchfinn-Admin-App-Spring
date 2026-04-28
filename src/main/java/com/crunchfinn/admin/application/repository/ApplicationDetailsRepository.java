@@ -34,4 +34,13 @@ public interface ApplicationDetailsRepository extends JpaRepository<ApplicationD
             @Param("name") String name,
             @Param("status") ApplicationStatus status,
             @Param("source") ApplicationSource source);
+
+    @Query("""
+        SELECT a FROM ApplicationDetails a
+        LEFT JOIN FETCH a.assignedPartners ap
+        LEFT JOIN FETCH ap.bankPartner bp
+        LEFT JOIN FETCH bp.bank
+        WHERE a.applicationId = :id
+    """)
+    Optional<ApplicationDetails> findByApplicationIdWithPartners(@Param("id") String applicationId);
 }
