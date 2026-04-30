@@ -1,5 +1,6 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org" th:fragment="layout">
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      th:fragment="layout">
   <head>
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <!-- Title tab logo -->
@@ -236,10 +237,13 @@
                 <button type="button" class="relative flex items-center" aria-expanded="false" data-dropdown-trigger>
                   <span class="absolute -inset-1.5"></span>
                   <span class="sr-only">Open user menu</span>
-                  <img class="size-8 rounded-full outline outline-black/5 outline-offset-1 bg-gray-50"
-                       src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&amp;ixid=eyJhcHBfaWQiOjEyMDd9&amp;auto=format&amp;fit=facearea&amp;facepad=2&amp;w=256&amp;h=256&amp;q=80" alt="Profile Photo">
+                  <span class="size-8 flex items-center justify-center rounded-full outline outline-black/10 outline-offset-1 bg-blue-200">
+                    <span class="text-lg font-semibold text-gray-800" th:text="${#authentication?.name != null ? #authentication.name.substring(0,1).toUpperCase() : ''}"></span>
+                  </span>
+<!--                  <img class="size-8 rounded-full outline outline-black/5 outline-offset-1 bg-gray-50"-->
+<!--                       src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&amp;ixid=eyJhcHBfaWQiOjEyMDd9&amp;auto=format&amp;fit=facearea&amp;facepad=2&amp;w=256&amp;h=256&amp;q=80" alt="Profile Photo">-->
                   <span class="hidden lg:flex lg:items-center">
-                    <span aria-hidden="true" class="ml-4 text-sm font-semibold text-gray-900">Tom Cook</span>
+                    <span aria-hidden="true" class="ml-4 text-sm font-semibold text-gray-900" sec:authentication="name"></span>
                     <svg viewBox="0 0 20 20" fill="currentColor" data-slot="icon" aria-hidden="true" class="ml-2 size-5 text-gray-400">
                       <path d="M5.22 8.22a.75.75 0 0 1 1.06 0L10 11.94l3.72-3.72a.75.75 0 1 1 1.06 1.06l-4.25 4.25a.75.75 0 0 1-1.06 0L5.22 9.28a.75.75 0 0 1 0-1.06Z" clip-rule="evenodd" fill-rule="evenodd"></path>
                     </svg>
@@ -247,7 +251,12 @@
                 </button>
                 <el-menu class="hidden absolute right-0 mt-2 py-2 w-32 origin-top-right rounded-md bg-white shadow-lg outline outline-black/5 transition transform opacity-0 scale-95" data-dropdown-menu>
                   <a href="#" class="block py-1 px-3 text-sm text-gray-900 focus:outline-none focus:bg-gray-50 hover:bg-gray-50" id="item-2" role="menuitem" tabindex="-1">Profile</a>
-                  <a href="#" class="block py-1 px-3 text-sm text-gray-900 focus:outline-none focus:bg-gray-50 hover:bg-gray-50" id="item-3" role="menuitem" tabindex="-1">Sign out</a>
+<!--                  <a href="#" class="block py-1 px-3 text-sm text-gray-900 focus:outline-none focus:bg-gray-50 hover:bg-gray-50" id="item-3" role="menuitem" tabindex="-1">Sign out</a>-->
+                  <form class="relative block py-1 px-3 text-sm text-gray-900 focus:outline-none focus:bg-gray-50 hover:bg-gray-50" th:action="@{/logout}" method="post" id="item-3" role="menuitem" tabindex="-1">
+                    <button type="submit" class="cursor-pointer">
+                      <span class="absolute inset-0"></span>
+                      Sign out</button>
+                  </form>
                 </el-menu>
               </el-dropdown>
             </div>
