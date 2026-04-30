@@ -11,8 +11,6 @@ public class PageController {
 
     @GetMapping("/")
     public String landingPage(Model model) {
-        model.addAttribute("loginRequest", new LoginRequest());
-
         return "pages/landing";
     }
 
@@ -21,5 +19,12 @@ public class PageController {
         model.addAttribute("currentPath", request.getRequestURI());
 
         return "pages/dashboard";
+    }
+
+    @GetMapping("/settings")
+    public String settingsPage(HttpServletRequest request, Model model) {
+        model.addAttribute("currentPath", request.getRequestURI());
+
+        return "settings/main";
     }
 }
