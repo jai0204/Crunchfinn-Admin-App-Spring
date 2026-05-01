@@ -12,7 +12,7 @@
           <div class="grid grid-cols-1">
             <select id="status" name="status"
                     class="row-start-1 col-start-1 pl-3 pr-8 py-1.5 text-sm text-gray-900 rounded-sm appearance-none outline outline-gray-300 outline-offset-1">
-              <option value="" disabled th:selected="${status == null}">Choose Status...</option>
+              <option value="" th:selected="${status == null}">Choose Status...</option>
               <option th:each="statusValue : ${statusList}"
                       th:value="${statusValue}"
                       th:text="${statusValue}"
@@ -26,7 +26,7 @@
           <div class="grid grid-cols-1">
             <select id="source" name="source"
                     class="row-start-1 col-start-1 pl-3 pr-8 py-1.5 text-sm text-gray-900 rounded-sm appearance-none outline outline-gray-300 outline-offset-1">
-              <option value="" disabled selected>Choose Source...</option>
+              <option value="" th:selected="${source == null}">Choose Source...</option>
               <option th:each="sourceValue : ${sourceList}"
                       th:value="${sourceValue}"
                       th:text="${sourceValue}"
@@ -101,7 +101,7 @@
             </thead>
             <tbody class="divide-y-1 divide-gray-200">
               <tr th:each="app : ${applications}">
-                <td class="pl-4 pr-3 py-4 text-sm text-gray-600 whitespace-nowrap" th:text="${appStat.count}"></td>
+                <td class="pl-4 pr-3 py-4 text-sm text-gray-600 whitespace-nowrap" th:text="${currentPage * size + appStat.count}"></td>
                 <td class="py-4 px-3 text-sm text-gray-600 whitespace-nowrap" th:text="${app.applicationId}"></td>
                 <td class="py-4 px-3 text-sm text-gray-600 whitespace-nowrap" th:text="${app.name}"></td>
                 <td class="py-4 px-3 text-sm text-gray-600 whitespace-nowrap" th:text="${app.phoneNumber}"></td>
@@ -114,6 +114,59 @@
               </tr>
             </tbody>
           </table>
+          <!-- Pagination -->
+          <div class="w-full">
+            <div class="flex items-center justify-between border-t border-gray-200 bg-white px-4 py-4">
+              <div class="flex flex-1 justify-between sm:hidden">
+                <a th:href="${currentPage > 0} ? @{/applications(page=${currentPage - 1}, size=${size}, name=${name}, status=${status}, source=${source})} : null"
+                   class="relative inline-flex items-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50">Previous</a>
+                <a th:href="${(currentPage + 1) < totalPages} ? @{/applications(page=${currentPage + 1}, size=${size}, name=${name}, status=${status}, source=${source})} : null" class="relative ml-3 inline-flex items-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50">Next</a>
+              </div>
+              <div class="hidden sm:flex sm:flex-1 sm:items-center sm:justify-between">
+                <div>
+                  <p class="text-sm text-gray-700">
+                    Showing
+                    <span class="font-medium" th:text="${start}"></span>
+                    to
+                    <span class="font-medium" th:text="${end}"></span>
+                    of
+                    <span class="font-medium" th:text="${totalItems}"></span>
+                    results
+                  </p>
+                </div>
+                <div>
+                  <nav aria-label="Pagination" class="isolate inline-flex -space-x-px rounded-md shadow-xs">
+                    <a th:href="${currentPage > 0} ? @{/applications(page=${currentPage - 1}, size=${size}, name=${name}, status=${status}, source=${source})} : null"
+                       class="relative inline-flex items-center rounded-l-md px-2 py-2 text-gray-400 inset-ring inset-ring-gray-300 hover:bg-gray-50 focus:z-20 focus:outline-offset-0">
+                      <span class="sr-only">Previous</span>
+                      <svg viewBox="0 0 20 20" fill="currentColor" data-slot="icon" aria-hidden="true" class="size-5">
+                        <path d="M11.78 5.22a.75.75 0 0 1 0 1.06L8.06 10l3.72 3.72a.75.75 0 1 1-1.06 1.06l-4.25-4.25a.75.75 0 0 1 0-1.06l4.25-4.25a.75.75 0 0 1 1.06 0Z" clip-rule="evenodd" fill-rule="evenodd" />
+                      </svg>
+                    </a>
+                    <span th:each="i : ${#numbers.sequence(0, totalPages - 1)}">
+                    <a th:if="${i == currentPage}"
+                       th:text="${i+1}"
+                       aria-current="page"
+                       class="relative z-10 inline-flex items-center bg-blue-600 px-4 py-2 text-sm font-semibold text-white focus:z-20 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600">
+                    </a>
+                    <a th:if="${i != currentPage}"
+                       th:href="@{/applications(page=${i}, size=${size}, name=${name}, status=${status}, source=${source})}"
+                       th:text="${i+1}"
+                       class="relative inline-flex items-center px-4 py-2 text-sm font-semibold text-gray-900 inset-ring inset-ring-gray-300 hover:bg-gray-50 focus:z-20 focus:outline-offset-0">
+                    </a>
+                  </span>
+                    <a th:href="${(currentPage + 1) < totalPages} ? @{/applications(page=${currentPage + 1}, size=${size}, name=${name}, status=${status}, source=${source})} : null"
+                       class="relative inline-flex items-center rounded-r-md px-2 py-2 text-gray-400 inset-ring inset-ring-gray-300 hover:bg-gray-50 focus:z-20 focus:outline-offset-0">
+                      <span class="sr-only">Next</span>
+                      <svg viewBox="0 0 20 20" fill="currentColor" data-slot="icon" aria-hidden="true" class="size-5">
+                        <path d="M8.22 5.22a.75.75 0 0 1 1.06 0l4.25 4.25a.75.75 0 0 1 0 1.06l-4.25 4.25a.75.75 0 0 1-1.06-1.06L11.94 10 8.22 6.28a.75.75 0 0 1 0-1.06Z" clip-rule="evenodd" fill-rule="evenodd" />
+                      </svg>
+                    </a>
+                  </nav>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </div>

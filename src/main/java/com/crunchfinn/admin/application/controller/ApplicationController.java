@@ -8,6 +8,7 @@ import com.crunchfinn.admin.bankpartner.service.BankPartnerService;
 import com.crunchfinn.admin.common.enums.Gender;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -31,20 +32,39 @@ public class ApplicationController {
     public String listApplications(@RequestParam(required = false) String name,
                                    @RequestParam(required = false) String status,
                                    @RequestParam(required = false) String source,
+                                   @RequestParam(defaultValue = "0") int page,
+                                   @RequestParam(defaultValue = "10") int size,
                                    HttpServletRequest request,
                                    Model model) {
-        List<ApplicationResponse> applications = null;
+
+        Page<ApplicationResponse> applications = null;
+
         if (name != null || status != null || source != null) {
-            applications = applicationService.searchApplications(name, status, source);
+            applications = applicationService.searchApplications(name, status, source, page, size);
         }
 
-        model.addAttribute("applications", applications);
+        model.addAttribute("applications", applications == null ? null : applications.getContent());
         model.addAttribute("name", name);
         model.addAttribute("status", status);
         model.addAttribute("source", source);
         model.addAttribute("statusList", ApplicationStatus.values());
         model.addAttribute("sourceList", ApplicationSource.values());
         model.addAttribute("currentPath", request.getRequestURI());
+
+        // Pagination attributes
+        if (applications != null) {
+            int currentPage = applications.getNumber();
+            long totalItems = applications.getTotalElements();
+            long start = totalItems == 0 ? 0 : (long) currentPage * size + 1;
+            long end = totalItems == 0 ? 0 : Math.min((currentPage + 1L) * size, totalItems);
+
+            model.addAttribute("start", start);
+            model.addAttribute("end", end);
+            model.addAttribute("currentPage", applications.getNumber());
+            model.addAttribute("totalItems", applications.getTotalElements());
+            model.addAttribute("totalPages", applications.getTotalPages());
+            model.addAttribute("size", size);
+        }
 
         return "applications/list";
     }

@@ -3,6 +3,8 @@ package com.crunchfinn.admin.application.repository;
 import com.crunchfinn.admin.application.entity.ApplicationDetails;
 import com.crunchfinn.admin.application.enums.ApplicationSource;
 import com.crunchfinn.admin.application.enums.ApplicationStatus;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -34,6 +36,22 @@ public interface ApplicationDetailsRepository extends JpaRepository<ApplicationD
             @Param("name") String name,
             @Param("status") ApplicationStatus status,
             @Param("source") ApplicationSource source);
+
+    @Query("""
+        SELECT c FROM ApplicationDetails c
+        WHERE (:name IS NULL
+        OR LOWER(c.name) LIKE LOWER(CONCAT('%', :name, '%'))
+        OR LOWER(c.phoneNumber) LIKE LOWER(CONCAT('%', :name, '%'))
+        OR LOWER(c.applicationId) LIKE LOWER(CONCAT('%', :name, '%'))
+        )
+        AND (:status IS NULL OR c.status = :status)
+        AND (:source IS NULL OR c.source = :source)
+    """)
+    Page<ApplicationDetails> searchApplications(
+            @Param("name") String name,
+            @Param("status") ApplicationStatus status,
+            @Param("source") ApplicationSource source,
+            Pageable pageable);
 
     @Query("""
         SELECT a FROM ApplicationDetails a

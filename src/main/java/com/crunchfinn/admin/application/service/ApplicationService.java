@@ -2,6 +2,7 @@ package com.crunchfinn.admin.application.service;
 
 import com.crunchfinn.admin.application.dto.*;
 import com.crunchfinn.admin.application.enums.ApplicationStatus;
+import org.springframework.data.domain.Page;
 
 import java.util.List;
 
@@ -11,6 +12,7 @@ public interface ApplicationService {
     ApplicationResponse updateApplication(String applicationId, UpdateApplicationRequest request);
     ApplicationResponse getApplication(String applicationId);
     List<ApplicationResponse> searchApplications(String name, String status, String source);
+    Page<ApplicationResponse> searchApplications(String name, String status, String source, int page, int size);
     void updateAdminDetails(AdminUpdateRequest request);
     void deleteApplication(String applicationId);
     List<ApplicationStatus> getDisabledStatuses();

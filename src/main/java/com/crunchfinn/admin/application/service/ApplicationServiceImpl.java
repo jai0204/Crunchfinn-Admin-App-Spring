@@ -15,6 +15,9 @@ import com.crunchfinn.admin.common.service.CountryService;
 import com.crunchfinn.admin.common.service.StateCityService;
 import com.crunchfinn.admin.disbursement.service.DisbursementService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -110,6 +113,30 @@ public class ApplicationServiceImpl implements ApplicationService {
         return entities.stream()
                 .map(mapper::toResponse)
                 .toList();
+    }
+
+    @Override
+    public Page<ApplicationResponse> searchApplications(String name, String status, String source, int page, int size) {
+
+        ApplicationStatus statusEnum = null;
+        ApplicationSource sourceEnum = null;
+
+        if (status != null && !status.isBlank()) {
+            statusEnum = ApplicationStatus.valueOf(status);
+        }
+        if (source != null && !source.isBlank()) {
+            sourceEnum = ApplicationSource.valueOf(source);
+        }
+
+        Pageable pageable = PageRequest.of(
+                page,
+                size
+        );
+
+        Page<ApplicationDetails> entities =
+                repository.searchApplications(name, statusEnum, sourceEnum, pageable);
+
+        return entities.map(mapper::toResponse);
     }
 
     @Override
