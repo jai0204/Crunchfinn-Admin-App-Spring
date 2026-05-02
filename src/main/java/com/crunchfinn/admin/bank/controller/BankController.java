@@ -6,6 +6,7 @@ import com.crunchfinn.admin.bank.dto.BankResponse;
 import com.crunchfinn.admin.bank.service.BankService;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -25,14 +26,40 @@ public class BankController {
     }
 
     // LIST PAGE
+//    @GetMapping
+//    public String listBanks(HttpServletRequest request,
+//                            Model model) {
+//
+//        List<BankResponse> banks = bankService.getAllBanks();
+//
+//        model.addAttribute("banks", banks);
+//        model.addAttribute("currentPath", request.getRequestURI());
+//
+//        return "banks/list";
+//    }
+
     @GetMapping
-    public String listBanks(HttpServletRequest request,
+    public String listBanks(@RequestParam(defaultValue = "0") int page,
+                            @RequestParam(defaultValue = "10") int size,
+                            HttpServletRequest request,
                             Model model) {
 
-        List<BankResponse> banks = bankService.getAllBanks();
+        Page<BankResponse> bankPage = bankService.getAllBanks(page, size);
 
-        model.addAttribute("banks", banks);
+        model.addAttribute("banks", bankPage.getContent());
         model.addAttribute("currentPath", request.getRequestURI());
+        // Pagination
+        int currentPage = bankPage.getNumber();
+        long totalItems = bankPage.getTotalElements();
+        long start = totalItems == 0 ? 0 : (long) currentPage * size + 1;
+        long end = totalItems == 0 ? 0 : Math.min((currentPage + 1L) * size, totalItems);
+
+        model.addAttribute("start", start);
+        model.addAttribute("end", end);
+        model.addAttribute("currentPage", bankPage.getNumber());
+        model.addAttribute("totalItems", bankPage.getTotalElements());
+        model.addAttribute("totalPages", bankPage.getTotalPages());
+        model.addAttribute("size", size);
 
         return "banks/list";
     }

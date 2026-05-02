@@ -7,6 +7,9 @@ import com.crunchfinn.admin.bank.entity.BankDetails;
 import com.crunchfinn.admin.bank.mapper.BankMapper;
 import com.crunchfinn.admin.bank.repository.BankDetailsRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -79,6 +82,16 @@ public class BankServiceImpl implements BankService {
                 .stream()
                 .map(mapper::toResponse)
                 .toList();
+    }
+
+    public Page<BankResponse> getAllBanks(int page, int size) {
+        Pageable pageable = PageRequest.of(
+                page,
+                size
+        );
+        Page<BankDetails> bankPage = repository.findAll(pageable);
+
+        return bankPage.map(mapper::toResponse);
     }
 
     // DELETE
