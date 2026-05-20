@@ -12,6 +12,9 @@ import com.crunchfinn.admin.disbursement.entity.DisbursementDetails;
 import com.crunchfinn.admin.disbursement.entity.DisbursementTranche;
 import com.crunchfinn.admin.disbursement.repository.DisbursementRepository;
 import com.crunchfinn.admin.disbursement.repository.DisbursementTrancheRepository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -90,6 +93,19 @@ public class DisbursementServiceImpl implements DisbursementService {
     }
 
     @Override
+    public Page<DisbursementListResponse> getAllDisbursements(int page, int size) {
+        Pageable pageable = PageRequest.of(
+                page,
+                size
+        );
+
+        Page<DisbursementListResponse> disbursePage =
+                disbursementRepository.findAllForListView(pageable);
+
+        return disbursePage;
+    }
+
+    @Override
     public List<DisbursementListResponse> searchDisbursements(String search, String source, String disbursementMonth) {
         Integer month = null;
         Integer year = null;
@@ -108,6 +124,34 @@ public class DisbursementServiceImpl implements DisbursementService {
 
         List<DisbursementListResponse> list =
                 disbursementRepository.searchDisbursements(search, sourceEnum, month, year);
+
+        return list;
+    }
+
+    @Override
+    public Page<DisbursementListResponse> searchDisbursements(String search, String source, String disbursementMonth, int page, int size) {
+        Integer month = null;
+        Integer year = null;
+
+        // Convert yyyy-MM → month & year
+        if (disbursementMonth != null && !disbursementMonth.isBlank()) {
+            YearMonth ym = YearMonth.parse(disbursementMonth);
+            month = ym.getMonthValue();
+            year = ym.getYear();
+        }
+
+        ApplicationSource sourceEnum = null;
+        if (source != null && !source.isBlank()) {
+            sourceEnum = ApplicationSource.valueOf(source);
+        }
+
+        Pageable pageable = PageRequest.of(
+                page,
+                size
+        );
+
+        Page<DisbursementListResponse> list =
+                disbursementRepository.searchDisbursements(search, sourceEnum, month, year, pageable);
 
         return list;
     }
