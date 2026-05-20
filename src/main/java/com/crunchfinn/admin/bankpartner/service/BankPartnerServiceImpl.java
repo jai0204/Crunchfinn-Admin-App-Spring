@@ -1,5 +1,6 @@
 package com.crunchfinn.admin.bankpartner.service;
 
+import com.crunchfinn.admin.bank.dto.BankResponse;
 import com.crunchfinn.admin.bank.entity.BankDetails;
 import com.crunchfinn.admin.bank.repository.BankDetailsRepository;
 import com.crunchfinn.admin.bankpartner.dto.*;
@@ -7,6 +8,9 @@ import com.crunchfinn.admin.bankpartner.entity.BankPartnerDetails;
 import com.crunchfinn.admin.bankpartner.mapper.BankPartnerMapper;
 import com.crunchfinn.admin.bankpartner.repository.BankPartnerDetailsRepository;
 import com.crunchfinn.admin.common.service.StateCityService;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -93,6 +97,16 @@ public class BankPartnerServiceImpl implements BankPartnerService {
                 .stream()
                 .map(mapper::toResponse)
                 .toList();
+    }
+
+    public Page<BankPartnerResponse> getAllPartners(int page, int size) {
+        Pageable pageable = PageRequest.of(
+                page,
+                size
+        );
+        Page<BankPartnerDetails> bankPage = repository.findAll(pageable);
+
+        return bankPage.map(mapper::toResponse);
     }
 
     // LIST BY BANK

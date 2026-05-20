@@ -8,6 +8,7 @@ import com.crunchfinn.admin.bankpartner.dto.BankPartnerResponse;
 import com.crunchfinn.admin.bankpartner.service.BankPartnerService;
 import com.crunchfinn.admin.common.enums.Gender;
 import jakarta.servlet.http.HttpServletRequest;
+import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -30,12 +31,27 @@ public class BankPartnerController {
 
     // LIST PAGE
     @GetMapping
-    public String listPartners(HttpServletRequest request, Model model) {
+    public String listPartners(@RequestParam(defaultValue = "0") int page,
+                               @RequestParam(defaultValue = "10") int size,
+                               HttpServletRequest request,
+                               Model model) {
 
-        List<BankPartnerResponse> partners = partnerService.getAllPartners();
+        Page<BankPartnerResponse> bankPage = partnerService.getAllPartners(page, size);
 
-        model.addAttribute("partners", partners);
+        model.addAttribute("partners", bankPage.getContent());
         model.addAttribute("currentPath", request.getRequestURI());
+        // Pagination
+        int currentPage = bankPage.getNumber();
+        long totalItems = bankPage.getTotalElements();
+        long start = totalItems == 0 ? 0 : (long) currentPage * size + 1;
+        long end = totalItems == 0 ? 0 : Math.min((currentPage + 1L) * size, totalItems);
+
+        model.addAttribute("start", start);
+        model.addAttribute("end", end);
+        model.addAttribute("currentPage", bankPage.getNumber());
+        model.addAttribute("totalItems", bankPage.getTotalElements());
+        model.addAttribute("totalPages", bankPage.getTotalPages());
+        model.addAttribute("size", size);
 
         return "partners/list";
     }
@@ -123,7 +139,6 @@ public class BankPartnerController {
     @PostMapping("/{id}/delete")
     public String deletePartner(
             @PathVariable Long id,
-            @RequestHeader(value = "Referer", required = false) String referer,
             RedirectAttributes redirectAttributes) {
 
         partnerService.deletePartner(id);
@@ -131,6 +146,6 @@ public class BankPartnerController {
         redirectAttributes.addFlashAttribute("success",
                 "Partner deleted successfully");
 
-        return "redirect:" + (referer != null ? referer : "/partners");
+        return "redirect:/partners";
     }
 }
