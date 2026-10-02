@@ -69,8 +69,8 @@ public class ApplicationDetails {
     @Column(name = "gre_score", columnDefinition = "SMALLINT")
     private Short greScore;
 
-    @Column(name = "ielts_score", columnDefinition = "SMALLINT")
-    private Short ieltsScore;
+    @Column(name = "ielts_score", precision = 3, scale = 1)
+    private BigDecimal ieltsScore;
 
     @Column(name = "pte_score", columnDefinition = "SMALLINT")
     private Short pteScore;
@@ -304,11 +304,11 @@ public class ApplicationDetails {
         this.greScore = greScore;
     }
 
-    public Short getIeltsScore() {
+    public BigDecimal getIeltsScore() {
         return ieltsScore;
     }
 
-    public void setIeltsScore(Short ieltsScore) {
+    public void setIeltsScore(BigDecimal ieltsScore) {
         this.ieltsScore = ieltsScore;
     }
 

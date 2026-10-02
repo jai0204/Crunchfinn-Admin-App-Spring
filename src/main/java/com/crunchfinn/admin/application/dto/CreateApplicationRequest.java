@@ -27,7 +27,7 @@ public class CreateApplicationRequest {
     private String intake;
 
     private Short greScore;
-    private Short ieltsScore;
+    private BigDecimal ieltsScore;
     private Short pteScore;
     private Short toeflScore;
     private Boolean hasAdmit;
@@ -172,11 +172,11 @@ public class CreateApplicationRequest {
         this.greScore = greScore;
     }
 
-    public Short getIeltsScore() {
+    public BigDecimal getIeltsScore() {
         return ieltsScore;
     }
 
-    public void setIeltsScore(Short ieltsScore) {
+    public void setIeltsScore(BigDecimal ieltsScore) {
         this.ieltsScore = ieltsScore;
     }
 
